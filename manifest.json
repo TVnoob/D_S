@@ -1,0 +1,36 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "pls read README",
+        "name": "DeathSwap",
+        "uuid": "", 
+        "version": [ 0, 0, 1 ],
+        "min_engine_version": [ 1, 18, 10 ]
+    },
+    "modules": [
+        {
+            "description": "Create by Delta_Conveyor",
+            "type": "script",
+            "language": "javascript",
+            "uuid": "",
+            "entry": "scripts/main.js",
+            "version": [0, 0, 1]
+        }
+    ],
+    "dependencies": [
+        {
+            "uuid": "RESOURSE-UUID",
+            "version": [0, 0, 1]
+        },
+        {
+            "module_name": "@minecraft/server",
+            "version": "2.2.0-beta"
+        },
+        {
+            "module_name": "@minecraft/server-ui",
+            "version": "2.1.0-beta"
+        }
+      ],
+      
+    "capabilities": ["script_eval","client_forms"]   
+}
