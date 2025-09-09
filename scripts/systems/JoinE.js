@@ -22,7 +22,7 @@ export function playereventinworld(){
         }
 
         // === ゲーム開始後に入ってきたプレイヤーは観戦者にする ===
-        if (startedGame === true && player.id !== hostPlayerId) {
+        if (startedGame === true) {
             player.addTag("spec");
             player.sendMessage("§7[Death_Swap] ゲームはすでに開始されています。観戦者として参加します。");
             player.runCommand("gamemode spectator");
@@ -36,14 +36,15 @@ export function playereventinworld(){
     });
 
     // === プレイヤー退出処理 ===
-    world.afterEvents.playerLeave.subscribe((ev) => {
-        world.sendMessage(`§e${ev.playerName} がワールドを退出しました。`);
-    });
+//  world.afterEvents.playerLeave.subscribe((ev) => {
+//      world.sendMessage(`§e${ev.playerName} がワールドを退出しました。`);
+//  });
 
     // === 脱落者処理（観戦者化） ===
     world.afterEvents.entityDie.subscribe((ev) => {
         const dead = ev.deadEntity;
         if (dead.typeId !== "minecraft:player") return;
+        if (startedGame !== true) return;
 
         // 観戦者タグを付与
         dead.addTag("spec");
@@ -64,13 +65,13 @@ export function playereventinworld(){
 export function giveOwnerConfigUI(player) {
     try {
         const inv = player.getComponent("minecraft:inventory").container;
-        const configItem = new ItemStack("system:configUI", 1);
+        const configItem = new ItemStack("minecraft:stick", 1);
 
         // すでに持っているか確認
         let hasConfig = false;
         for (let i = 0; i < inv.size; i++) {
             const slot = inv.getItem(i);
-            if (slot && slot.typeId === "system:configUI") {
+            if (slot && slot.typeId === "minecraft:stick") {
                 hasConfig = true;
                 break;
             }
@@ -93,12 +94,12 @@ export function distributeJoinSpectatorItems(player) {
     try {
         player.runCommand("clear @s");
 
-        const joinItem = new ItemStack("item:join", 1);
-        const specItem = new ItemStack("item:spectator", 1);
+        player.runCommand('replaceitem entity @s slot.hotbar 0 item:join 1 0 {"item_lock":{"mode":"lock_in_slot"}}')
+        player.runCommand('replaceitem entity @s slot.hotbar 1 item:spectator 1 0 {"item_lock":{"mode":"lock_in_slot"}}');
 
-        const inv = player.getComponent("minecraft:inventory").container;
-        inv.setItem(0, joinItem);
-        inv.setItem(1, specItem);
+        player.removeTag("spec");
+        player.removeTag("entry");
+
     } catch (e) {
         console.warn("アイテム配布エラー:", e);
     }

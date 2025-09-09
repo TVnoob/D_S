@@ -1,2 +1,4 @@
 # DeathSwap
 古いプラグインの要素を統合版にて再現することにすることに挑戦
+### create by Delta_conveyor
+- MIT ライセンス

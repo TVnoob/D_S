@@ -16,7 +16,7 @@ export function originalitemscriptfucktion(){
                 // エントリー付与
                 if (!player.hasTag("entry")) {
                     player.addTag("entry");
-                    player.sendMessage("§aゲームに参加しました！");
+                    player.sendMessage("§aゲームに参加しました!");
                 } else {
                     player.sendMessage("§eすでに参加登録済みです。");
                 }
