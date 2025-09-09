@@ -3,7 +3,7 @@
     "header": {
         "description": "pls read README",
         "name": "DeathSwap",
-        "uuid": "", 
+        "uuid": "17122ab1-9885-4a44-9f24-cd55bc7011ef", 
         "version": [ 0, 0, 1 ],
         "min_engine_version": [ 1, 18, 10 ]
     },
@@ -12,14 +12,14 @@
             "description": "Create by Delta_Conveyor",
             "type": "script",
             "language": "javascript",
-            "uuid": "",
+            "uuid": "d1a7b453-7244-419b-a567-b25d32f52f64",
             "entry": "scripts/main.js",
             "version": [0, 0, 1]
         }
     ],
     "dependencies": [
         {
-            "uuid": "RESOURSE-UUID",
+            "uuid": "0448eca8-e3b9-4dd4-9f5d-afdb6ee30300",
             "version": [0, 0, 1]
         },
         {
