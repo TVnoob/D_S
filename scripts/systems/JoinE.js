@@ -47,6 +47,11 @@ export function playereventinworld(){
         if (dead.typeId !== "minecraft:player") return;
         if (startedGame !== true) return;
 
+        // joinedPlayers から削除
+        if (joinedPlayers.has(dead.id)) {
+            joinedPlayers.delete(dead.id);
+        }
+
         // 観戦者タグを付与
         dead.addTag("spec");
         dead.runCommand("gamemode spectator");

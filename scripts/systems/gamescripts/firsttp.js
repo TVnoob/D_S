@@ -1,5 +1,6 @@
 import { system } from "@minecraft/server";
 import { joinedPlayers } from "./gamedamon.js";
+import { config } from "../config.js";
 
 // === 乱数ユーティリティ ===
 function randomCoord(range) {
@@ -28,7 +29,7 @@ export function doFirstTP() {
     }
 
     const usedPositions = [];
-    const minDistance = 500; // プレイヤー同士の最小距離
+    const minDistance = config.tpMinDistance; // プレイヤー同士の最小距離
 
     for (const player of players) {
         let pos;
@@ -37,9 +38,9 @@ export function doFirstTP() {
         // 有効な座標が見つかるまで試行
         do {
             pos = {
-                x: randomCoord(10000),
+                x: randomCoord(config.tpRange),
                 y: 150, // 仮の高さ（安全処理を後で追加）
-                z: randomCoord(10000)
+                z: randomCoord(config.tpRange)
             };
             attempts++;
             if (attempts > 50) {
@@ -56,4 +57,7 @@ export function doFirstTP() {
     }
 
     console.warn("[Death_Swap] 初期ランダムTPを完了しました。");
+}
+export function loadmainsystematfirsttp(){
+    console.warn("firsttp.js was loaded");
 }

@@ -19,6 +19,7 @@ export function startgameinthedeathswapsurvivalminigame(){
 
 // === ゲーム開始処理 ===
 function startGame() {
+    joinedPlayers.clear(); // ← 新しいゲームのたびに空にする
     startedGame = true;
     world.sendMessage("§aゲームが開始されました");
 
