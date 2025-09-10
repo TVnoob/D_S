@@ -10,6 +10,11 @@ export function playereventinworld(){
         const player = ev.player;
         if (!ev.initialSpawn) return; // 死に戻りは無視
 
+        // === 参加/観戦アイテムを最初に配布 ===
+        if (startedGame === false) {
+            distributeJoinSpectatorItems(player);
+        }
+
         // === ワールド主登録 ===
         if (!hostPlayerId) {
             hostPlayerId = player.id;
@@ -29,10 +34,6 @@ export function playereventinworld(){
             return;
         }
 
-        // === ゲーム開始前：全員にアイテム配布 ===
-        if (startedGame === false) {
-            distributeJoinSpectatorItems(player);
-        }
     });
 
     // === プレイヤー退出処理 ===
