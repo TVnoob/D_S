@@ -1,10 +1,11 @@
+// config.js
 import { world, system, Player } from "@minecraft/server";
 import { ModalFormData, ActionFormData } from "@minecraft/server-ui";
 
 export const config = {
     killPearl: true,        // キルパール有効化
     tpRange: 10000,         // 初期TP範囲
-    tpMinDistance: 500,     // 初期TPでの最小距離
+    tpMinDistance: 1000,     // 初期TPでの最小距離
     swapMinTime: 2,         // スワップ最短時間（分）
     swapMaxTime: 3,         // スワップ最長時間（分）
     warningTime: 10         // 警報時間（秒）
@@ -12,14 +13,14 @@ export const config = {
 
 // === ConfigUI アイテム使用イベント ===
 export function configuisetupfunction(){
-world.afterEvents.itemUse.subscribe((ev) => {
-    const player = ev.source;
-    const item = ev.itemStack;
+    world.afterEvents.itemUse.subscribe((ev) => {
+        const player = ev.source;
+        const item = ev.itemStack;
 
-    if (item?.typeId === "system:configui") {
-        openMainConfigUI(player);
-    }
-});
+        if (item?.typeId === "system:configui") {
+            openMainConfigUI(player);
+        }
+    });
 }
 // === メインメニュー UI ===
 function openMainConfigUI(player) {
@@ -44,23 +45,31 @@ function openMainConfigUI(player) {
 function openSettingsUI(player) {
     const form = new ModalFormData()
         .title("ゲーム設定")
-        .toggle("キルパールを有効化する", config.killPearl)
-        .slider("初期TP範囲（ブロック）", 10000, 20000, 5000, config.tpRange)
-        .slider("プレイヤー間の最小距離", 1000, 2000, 500, config.tpMinDistance)
-        .textField("スワップまでの最大時間", "(分)", { defaultValue: String(config.swapMaxTime ?? 4)})
-        .textField("スワップまでの最小時間", "(分)", { defaultValue: String(config.swapMinTime ?? 3)})
-        .textField("警告時間", "(秒)前からカウントダウンを始める", { defaultValue: String(config.warningTime ?? 30)});
+        .toggle("キルパールを有効化する", { defaultValue: config.killPearl })
+        .slider("初期TP範囲（ブロック）", 5000, 100000, { valueStep: 1000, defaultValue: config.tpRange })
+        .slider("プレイヤー間の最小距離", 500, 2000, { valueStep: 100, defaultValue: config.tpMinDistance })
+        .textField("スワップまでの最小時間", { placeholderText: "(分)", defaultValue: config.swapMinTime.toString() })
+        .textField("スワップまでの最大時間", { placeholderText: "(分)", defaultValue: config.swapMaxTime.toString() })
+        .textField("警告時間", { placeholderText: "(秒)前からカウントダウンを始める", defaultValue: config.warningTime.toString() })
+        .submitButton("§9変更を適応する");
+
+        console.warn(`[Death_Swap] openSettingsUI called for player: ${player.name} (${player.id})`);
 
     form.show(player).then((res) => {
-        if (res.canceled) return;
+        if (res.canceled) {
+            player.sendMessage("§7[Death_Swap] 設定はキャンセルされました。");
+            return;
+        }
 
-        // 設定を反映
+        console.warn(JSON.stringify(res.formValues)); // ← ここでデバッグ出力
+
         config.killPearl = res.formValues[0];
-        config.tpRange = res.formValues[1];
-        config.tpMinDistance = res.formValues[2];
-        config.swapMaxTime = res.formValues[3];
-        config.swapMinTime = res.formValues[4];
-        config.warningTime = res.formValues[5];
+        config.tpRange = Number(res.formValues[1]) || config.tpRange;
+        config.tpMinDistance = Number(res.formValues[2]) || config.tpMinDistance;
+        config.swapMinTime = parseInt(res.formValues[3]) || config.swapMinTime;
+        config.swapMaxTime = parseInt(res.formValues[4]) || config.swapMaxTime;
+        config.warningTime = parseInt(res.formValues[5]) || config.warningTime;
+
 
         player.sendMessage("§a[Death_Swap] 設定を更新しました。");
     });

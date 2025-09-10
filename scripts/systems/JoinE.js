@@ -4,9 +4,6 @@ import { startedGame } from "./gamescripts/gamedamon.js";
 import { mainPlayers } from "./gamescripts/notjoins.js";
 import { isHost, getHostId } from "./getowuner.js";
 
-// === グローバル変数 ===
-
-
 // === プレイヤー初参加処理 ===
 export function playereventinworld(){
     world.afterEvents.playerSpawn.subscribe((ev) => {
@@ -18,7 +15,7 @@ export function playereventinworld(){
             distributeJoinSpectatorItems(player);
         }
         // === オーナーに configUI を必ず持たせる ===
-        if (isHost(player.id)) { // issuse
+        if (isHost(player)) { // issuse
             giveOwnerConfigUI(player);
             console.warn("判別ができました");
         }
@@ -113,7 +110,7 @@ export function redistributeItems() {
     for (const player of players) {
         distributeJoinSpectatorItems(player);
         // オーナーなら ConfigUI を確認・再配布
-        if (isHost(player.id)) {
+        if (isHost(player)) {
             giveOwnerConfigUI(player);
         }
     }
