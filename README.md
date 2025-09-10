@@ -1,5 +1,6 @@
 # DeathSwap
 古いプラグインの要素を統合版にて再現することにすることに挑戦
+### [リソースパック](https://github.com/TVnoob/D_S-RE)
 ### create by Delta_conveyor
 - MIT ライセンスはアドオン自体に内蔵されているのでライセンスのためのクレジットは不要です
 ## scripts
