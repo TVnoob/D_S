@@ -38,3 +38,6 @@ export function swapPlayers() {
 
     console.warn("プレイヤーのスワップを実行しました。");
 }
+export function loadmainsystem(){
+    console.warn("tpcode.js was loaded");
+}
