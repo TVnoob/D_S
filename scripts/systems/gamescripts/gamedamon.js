@@ -1,4 +1,6 @@
+// gamedamon.js
 import { world, system } from "@minecraft/server";
+import { mainPlayers, setupSpectatorList } from "./notjoins";
 // 開始部分のみです
 // === グローバル管理用変数 ===
 export let startedGame = false;        // ゲームが開始されているかどうか
@@ -52,4 +54,6 @@ function startGame() {
     // doFirstTP(joinedPlayers);
 
     world.sendMessage(`§e参加人数: ${joinedPlayers.size}人`);
+    setupSpectatorList();
+
 }

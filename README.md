@@ -8,7 +8,7 @@
 - - gamedamon.js → ゲーム進行管理（開始・終了や他スクリプト制御）
 - - tpcode.js → スワップのTP処理（円順列に基づいた入れ替え）
 - - board.js → スコアボードやGUI的な情報表示
-- - notjoins.js → 非参加プレイヤーの観戦システム(必要性の議論)
+- - notjoins.js → 非参加プレイヤーの観戦システム
 - - firsttp.js → 初期ランダムTP処理
 - Config.js → UIを通じた設定・ゲーム開始トリガー
 - itemsScript.js → 追加アイテムの機能を追加

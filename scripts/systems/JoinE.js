@@ -1,8 +1,11 @@
+//JoinE.js
 import { world, ItemStack } from "@minecraft/server";
 import { startedGame } from "./gamescripts/gamedamon.js";
+import { mainPlayers } from "./gamescripts/notjoins.js";
 
 // === グローバル変数 ===
 let hostPlayerId = null; // 最初のプレイヤーをオーナーとして固定
+let hostsubscribe = false;
 
 // === プレイヤー初参加処理 ===
 export function playereventinworld(){
@@ -16,9 +19,10 @@ export function playereventinworld(){
         }
 
         // === ワールド主登録 ===
-        if (!hostPlayerId) {
+        if (!hostPlayerId || !hostsubscribe) {
             hostPlayerId = player.id;
             player.sendMessage("§a[Death_Swap] あなたはワールドオーナーに登録されました。");
+            hostsubscribe = true;
         }
 
         // === オーナーに configUI を必ず持たせる ===
@@ -37,9 +41,15 @@ export function playereventinworld(){
     });
 
     // === プレイヤー退出処理 ===
-//  world.afterEvents.playerLeave.subscribe((ev) => {
-//      world.sendMessage(`§e${ev.playerName} がワールドを退出しました。`);
-//  });
+    world.afterEvents.playerLeave.subscribe((ev) => {
+        const pid = ev.player;
+        if (joinedPlayers.has(pid.id)) {
+            joinedPlayers.delete(pid.id);
+        }
+        if (mainPlayers.has(pid.id)){
+            mainPlayers.delete(pid.id);
+        }
+    });
 
     // === 脱落者処理（観戦者化） ===
     world.afterEvents.entityDie.subscribe((ev) => {
