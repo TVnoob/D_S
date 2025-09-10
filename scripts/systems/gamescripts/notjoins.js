@@ -10,22 +10,24 @@ export function setupSpectatorList() {
 }
 
 // === 観戦TPコマンド ===
-world.beforeEvents.chatSend.subscribe((ev) => {
-    const player = ev.sender;
-    const message = ev.message.trim();
+export function sendchatchecker(){
+    world.beforeEvents.chatSend.subscribe((ev) => {
+        const player = ev.sender;
+        const message = ev.message.trim();
 
-    // 観戦者専用コマンド
-    if (message === "!spectp") {
-        ev.cancel = true; // チャットに表示しない
+        // 観戦者専用コマンド
+        if (message === "!spectp") {
+            ev.cancel = true; // チャットに表示しない
 
-        if (!player.hasTag("spec") || player.getGameMode() !== GameMode.spectator) {
-            player.sendMessage("§c[Death_Swap] あなたは観戦者ではありません！");
-            return;
+            if (!player.hasTag("spec") || player.getGameMode() !== GameMode.spectator) {
+                player.sendMessage("§c[Death_Swap] あなたは観戦者ではありません！");
+                return;
+            }
+
+            doSpectatorTP(player);
         }
-
-        doSpectatorTP(player);
-    }
-});
+    });
+}
 
 // === 観戦者TP処理 ===
 function doSpectatorTP(spectator) {

@@ -1,6 +1,6 @@
 import { world, system } from "@minecraft/server";
 import { config } from "../config.js";
-import { doSwap } from "./tpcode.js";
+import { swapPlayers } from "./tpcode.js";
 import { joinedPlayers } from "./gamedamon.js";
 
 let elapsedTime = 0;
@@ -9,7 +9,7 @@ let countdownActive = false;
 let intervalHandle = null;
 
 // === スコアボード初期化 ===
-export function initScoreboards() {
+function initScoreboards() {
     try {
         world.getDimension("overworld").runCommand("scoreboard objectives add deathswap dummy DeathSwap");
     } catch {}
@@ -69,7 +69,7 @@ function tick() {
                 world.getDimension("overworld").runCommand("kill @e[type=ender_pearl]");
             } catch {}
         }
-        doSwap();
+        swapPlayers();
         scheduleNextSwap();
         elapsedTime = 0;
     }

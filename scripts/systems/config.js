@@ -16,7 +16,7 @@ world.afterEvents.itemUse.subscribe((ev) => {
     const player = ev.source;
     const item = ev.itemStack;
 
-    if (item?.typeId === "system:configUI") {
+    if (item?.typeId === "system:configui") {
         openMainConfigUI(player);
     }
 });

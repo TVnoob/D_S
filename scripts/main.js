@@ -7,7 +7,8 @@ import { startgameinthedeathswapsurvivalminigame, ingorestopgame } from "./syste
 import { loadmainsystematfirsttp } from "./systems/gamescripts/firsttp";
 import { configuisetupfunction } from "./systems/config";
 import { sendchatchecker } from "./systems/gamescripts/notjoins";
-import { initScoreboards } from "./systems/gamescripts/board";
+//import { setupBoard } from "./systems/gamescripts/board";
+import { registerHostOnJoin } from "./systems/getowuner";
 // test();
 startgameinthedeathswapsurvivalminigame();
 ingorestopgame();
@@ -17,4 +18,5 @@ originalitemscriptfucktion();
 loadmainsystematfirsttp();
 configuisetupfunction();
 sendchatchecker();
-initScoreboards();
+//setupBoard();
+registerHostOnJoin();

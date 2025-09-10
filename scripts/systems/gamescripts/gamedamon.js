@@ -2,11 +2,11 @@
 import { world, system } from "@minecraft/server";
 import { mainPlayers, setupSpectatorList } from "./notjoins";
 import { redistributeItems } from "../JoinE.js";
+import { isHost, getHostId } from "../getowuner.js";
 // 開始部分のみです
 // === グローバル管理用変数 ===
 export let startedGame = false;        // ゲームが開始されているかどうか
 export const joinedPlayers = new Map(); // 参加プレイヤー (id → player)
-export let hostPlayerId = null;
 
 // === スクリプトイベント受信 ===
 export function startgameinthedeathswapsurvivalminigame(){
@@ -39,7 +39,7 @@ function startGame() {
             if (player.hasTag("spec")) {
                 player.removeTag("spec");
             }
-            player.sendMessage("§aあなたはゲームに参加しました！");
+            player.sendMessage("§aあなたはゲームに参加しました!");
         } else {
             // entry タグがない → 強制観戦者
             if (!player.hasTag("spec")) {
@@ -67,7 +67,7 @@ export function ingorestopgame(){
         if (msg === "!dsstop") {
             ev.cancel = true;
 
-            if (player.id !== hostPlayerId) {
+            if (isHost(player.id)) {
                 player.sendMessage("§c[Death_Swap] あなたはオーナーではないため実行できません。");
                 return;
             }
