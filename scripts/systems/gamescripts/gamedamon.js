@@ -1,10 +1,12 @@
 // gamedamon.js
 import { world, system } from "@minecraft/server";
 import { mainPlayers, setupSpectatorList } from "./notjoins";
+import { redistributeItems } from "../JoinE.js";
 // 開始部分のみです
 // === グローバル管理用変数 ===
 export let startedGame = false;        // ゲームが開始されているかどうか
 export const joinedPlayers = new Map(); // 参加プレイヤー (id → player)
+export let hostPlayerId = null;
 
 // === スクリプトイベント受信 ===
 export function startgameinthedeathswapsurvivalminigame(){
@@ -56,4 +58,32 @@ function startGame() {
     world.sendMessage(`§e参加人数: ${joinedPlayers.size}人`);
     setupSpectatorList();
 
+}
+export function ingorestopgame(){
+    world.beforeEvents.chatSend.subscribe((ev) => {
+        const player = ev.sender;
+        const msg = ev.message.trim();
+
+        if (msg === "!dsstop") {
+            ev.cancel = true;
+
+            if (player.id !== hostPlayerId) {
+                player.sendMessage("§c[Death_Swap] あなたはオーナーではないため実行できません。");
+                return;
+            }
+
+            if (!startedGame) {
+                player.sendMessage("§e[Death_Swap] ゲームは開始されていません。");
+                return;
+            }
+
+            // 緊急停止処理
+            startedGame = false;
+            joinedPlayers.clear();
+            mainPlayers.length = 0;
+
+            redistributeItems(); // アイテムを再配布
+            world.sendMessage("§c[Death_Swap] ゲームがオーナーにより緊急停止されました。");
+        }
+    })
 }

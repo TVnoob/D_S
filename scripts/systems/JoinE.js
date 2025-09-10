@@ -1,10 +1,9 @@
 //JoinE.js
 import { world, ItemStack } from "@minecraft/server";
-import { startedGame } from "./gamescripts/gamedamon.js";
+import { startedGame,hostPlayerId } from "./gamescripts/gamedamon.js";
 import { mainPlayers } from "./gamescripts/notjoins.js";
 
 // === グローバル変数 ===
-let hostPlayerId = null; // 最初のプレイヤーをオーナーとして固定
 let hostsubscribe = false;
 
 // === プレイヤー初参加処理 ===
@@ -43,11 +42,16 @@ export function playereventinworld(){
     // === プレイヤー退出処理 ===
     world.afterEvents.playerLeave.subscribe((ev) => {
         const pid = ev.player;
+
+        // joinedPlayers から削除
         if (joinedPlayers.has(pid.id)) {
             joinedPlayers.delete(pid.id);
         }
-        if (mainPlayers.has(pid.id)){
-            mainPlayers.delete(pid.id);
+
+        // mainPlayers からも削除（配列版）
+        const idx = mainPlayers.findIndex(p => p.id === pid.id);
+        if (idx !== -1) {
+            mainPlayers.splice(idx, 1);
         }
     });
 
