@@ -1,107 +1,112 @@
 import { world, system } from "@minecraft/server";
-import { config } from "../config.js";
-import { swapPlayers } from "./tpcode.js";
 import { joinedPlayers } from "./gamedamon.js";
+import { config } from "../config.js";
 
-let elapsedTime = 0;
-let swapTime = 0;
+// === グローバル管理 ===
+let elapsedSeconds = 0;
+let swapTargetTime = null;
 let countdownActive = false;
-let intervalHandle = null;
+let boardIntervalId = null; 
 
-// === スコアボード初期化 ===
-export function initScoreboards() {
-    if (scoreboardInitialized) return;
 
-    // 0.5秒 遅延して試行（軽量な安定策）
-    setTimeout(() => {
-        system.run(() => {
-            try {
-                world.getDimension("overworld").runCommand("scoreboard objectives add deathswap dummy DeathSwap");
-            } catch {}
-            try {
-                world.getDimension("overworld").runCommand("scoreboard objectives setdisplay sidebar deathswap");
-            } catch {}
-            scoreboardInitialized = true;
-            console.warn("[Death_Swap] Scoreboard initialized");
-        });
-    },500);
-}
-
-// === 経過時間を mm:ss に変換 ===
-function formatTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
-}
-
-// === スコアボード更新 ===
-function updateScoreboards() {
+/**
+ * アクションバー更新
+ */
+function updateActionbar() {
     const dim = world.getDimension("overworld");
 
-    // 経過時間
-    const elapsedStr = formatTime(elapsedTime);
-    dim.runCommand(`scoreboard players set "経過 ${elapsedStr}" deathswap 0`);
+    const remainingPlayers = joinedPlayers.size;
+    const elapsedMin = Math.floor(elapsedSeconds / 60);
+    const elapsedSec = elapsedSeconds % 60;
+    const elapsedStr = `${String(elapsedMin).padStart(2, "0")}:${String(elapsedSec).padStart(2, "0")}`;
 
-    // 残り時間
-    if (countdownActive) {
-        const remaining = swapTime - elapsedTime;
-        const remainStr = formatTime(remaining);
-        dim.runCommand(`scoreboard players set "残り ${remainStr}" deathswap 0`);
-    } else {
-        // ランダム表示
-        const fake = formatTime(Math.floor(Math.random() * 3600));
-        dim.runCommand(`scoreboard players set "残り ${fake}" deathswap 0`);
+    let remainingStr = "--:--";
+    if (swapTargetTime !== null) {
+        const remaining = swapTargetTime - elapsedSeconds;
+        if (remaining <= 0) {
+            remainingStr = "00:00";
+        } else {
+            const rMin = Math.floor(remaining / 60);
+            const rSec = remaining % 60;
+            remainingStr = `${String(rMin).padStart(2, "0")}:${String(rSec).padStart(2, "0")}`;
+        }
     }
 
-    // 生存プレイヤー数
-    dim.runCommand(`scoreboard players set "生存 ${joinedPlayers.size}" deathswap 0`);
+    const message = `§e残り人数: ${remainingPlayers} §7| §a経過: ${elapsedStr} §7`;
+    dim.runCommand(`title @a actionbar "${message}"`);
 }
 
-// === 新しいスワップ時間を決定 ===
-function scheduleNextSwap() {
+/**
+ * 次回スワップ時刻を決定
+ */
+function setNextSwapTime() {
     const minSec = config.swapMinTime * 60;
     const maxSec = config.swapMaxTime * 60;
-    swapTime = Math.floor(Math.random() * (maxSec - minSec + 1)) + minSec;
+    const rand = Math.floor(Math.random() * (maxSec - minSec + 1)) + minSec;
+    swapTargetTime = elapsedSeconds + rand;
     countdownActive = false;
+    console.warn(`[Death_Swap] 次のスワップは ${rand} 秒後 (残り: ${swapTargetTime - elapsedSeconds}s)`);
 }
 
-// === 進行ループ ===
-function tick() {
-    elapsedTime++;
+/**
+ * 毎秒処理
+ */
+function tickBoard() {
+    elapsedSeconds++;
 
-    if (!countdownActive && elapsedTime >= swapTime - config.warningTime) {
-        countdownActive = true;
-        world.sendMessage(`§e[Death_Swap] 残り ${config.warningTime} 秒でスワップが発生します！`);
-    }
+    // スワップ時間に近づいたら警告
+    if (swapTargetTime !== null) {
+        const remaining = swapTargetTime - elapsedSeconds;
 
-    if (elapsedTime >= swapTime) {
-        if (config.killPearl) {
-            try {
-                world.getDimension("overworld").runCommand("kill @e[type=ender_pearl]");
-            } catch {}
+        if (remaining > 0 && remaining <= config.warningTime) {
+            world.sendMessage(`§e[Death_Swap] スワップまで残り ${remaining} 秒！`);
         }
-        swapPlayers();
-        scheduleNextSwap();
-        elapsedTime = 0;
+
+        if (remaining <= 0) {
+            // スワップ発動イベント送信
+            system.run(() => {
+                // キルパール処理（有効時のみ）
+                if (config.killPearl) {
+                    try {
+                        world.getDimension("overworld").runCommand("kill @e[type=ender_pearl]");
+                    } catch {}
+                }
+                world.sendMessage("§c[Death_Swap] Swap!");
+                elapsedSeconds = 0;
+                world.getDimension("overworld").runCommand("scriptevent ds:swap");
+            });
+            setNextSwapTime(); // 次のスワップを予約
+        }
     }
 
-    updateScoreboards();
+    updateActionbar();
 }
 
-// === 外部公開 ===
-export function setupBoard() {
-    initScoreboards();
-    elapsedTime = 0;
-    scheduleNextSwap();
 
-    if (intervalHandle) system.clearRun(intervalHandle);
-    intervalHandle = system.runInterval(tick, 20);
+export function setupBoard() {
+    elapsedSeconds = 0;
+    setNextSwapTime();
+
+    // すでに動いているものがあれば停止してから新しく開始
+    if (boardIntervalId !== null) {
+        system.clearRun(boardIntervalId);
+        boardIntervalId = null;
+    }
+
+    // インターバルIDを保存
+    boardIntervalId = system.runInterval(() => {
+        tickBoard();
+    }, 20); // 20tick = 1秒
 }
 
 export function stopBoard() {
-    if (intervalHandle) {
-        system.clearRun(intervalHandle);
-        intervalHandle = null;
+    if (boardIntervalId !== null) {
+        system.clearRun(boardIntervalId);
+        boardIntervalId = null;
+        console.warn("[Death_Swap] ボードを停止しました");
     }
-    world.sendMessage("§c[Death_Swap] タイマーを停止しました。");
+}
+
+export function sucsesstoloadboard(){
+    console.warn("board.js was loaded");
 }

@@ -3,7 +3,10 @@ import { world, system } from "@minecraft/server";
 import { mainPlayers, setupSpectatorList } from "./notjoins";
 import { redistributeItems } from "../JoinE.js";
 import { isHost, getHostId } from "../getowuner.js";
-// 開始部分のみです
+import { setupBoard, stopBoard } from "./board.js";
+import { CONFIG_KEY } from "../config.js";
+import { doFirstTP } from "./firsttp.js";
+
 // === グローバル管理用変数 ===
 export let startedGame = false;        // ゲームが開始されているかどうか
 export const joinedPlayers = new Map(); // 参加プレイヤー (id → player)
@@ -23,12 +26,14 @@ export function startgameinthedeathswapsurvivalminigame(){
 
 // === ゲーム開始処理 ===
 function startGame() {
-    joinedPlayers.clear(); // ← 新しいゲームのたびに空にする
+    joinedPlayers.clear();
     startedGame = true;
-    world.sendMessage("§aゲームが開始されました");
+    world.sendMessage("§3現在、このアドオンはアルファ版です。効果音などは無く、予期せぬ動作が起こるかもしれません。");
+    world.sendMessage("§eゲームが開始されました");
 
     // 全プレイヤーを取得
     const players = world.getPlayers();
+    world.getDimension("overworld").runCommand("gamerule falldamage false");
 
     for (const player of players) {
         if (player.hasTag("entry")) {
@@ -48,16 +53,14 @@ function startGame() {
             player.sendMessage("§7観戦者として登録されました。");
         }
     }
-
-    // === ここで board.js / firsttp.js を呼び出せるようにする ===
-    // import { setupBoard } from "./board.js";
-    // import { doFirstTP } from "./firsttp.js";
-    // setupBoard();
-    // doFirstTP(joinedPlayers);
-
+    
     world.sendMessage(`§e参加人数: ${joinedPlayers.size}人`);
+    doFirstTP(joinedPlayers);
+    setupBoard();
     setupSpectatorList();
-
+    setTimeout(() => {
+        world.getDimension("overworld").runCommand("gamerule falldamage true")
+    }, 5000);
 }
 export function ingorestopgame(){
     world.beforeEvents.chatSend.subscribe((ev) => {
@@ -83,7 +86,54 @@ export function ingorestopgame(){
             mainPlayers.length = 0;
 
             redistributeItems(); // アイテムを再配布
-            world.sendMessage("§c[Death_Swap] ゲームがオーナーにより緊急停止されました。");
+            world.sendMessage("§c[Death_Swap] ゲームが緊急停止されました。");
+            stopBoard();
         }
+
+        if (msg === "!D_Creset") {
+            ev.cancel = true;
+
+            if (isHost(player.id)) {
+                player.sendMessage("§c[Death_Swap] あなたはオーナーではないため実行できません。");
+                return;
+            }
+
+            world.setDynamicProperty(CONFIG_KEY, JSON.stringify({}));
+
+            world.sendMessage("§c[Debug-System] clear config");
+        }
+
+        if (msg === "!D_startA") {
+            ev.cancel = true;
+
+            if (isHost(player.id)) {
+                player.sendMessage("§c[Death_Swap] あなたはオーナーではないため実行できません。");
+                return;
+            }
+
+            setupBoard();
+            world.sendMessage("§c[Debug-System] Start script of the action bar");
+        }
+
+        if (msg === "!D_stopA") {
+            ev.cancel = true;
+
+            if (isHost(player.id)) {
+                player.sendMessage("§c[Death_Swap] あなたはオーナーではないため実行できません。");
+                return;
+            }
+
+            stopBoard();
+            world.sendMessage("§c[Debug-System] Stop script of the action bar");
+        }
+
     })
+}
+
+export function Endgame(){
+
+    world.sendMessage("§b勝者が決定しました");
+    world.sendMessage("§b");// 勝者を発表する
+    redistributeItems();
+    stopBoard();
 }

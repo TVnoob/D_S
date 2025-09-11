@@ -2,7 +2,8 @@
 import { world, system } from "@minecraft/server";
 import { ModalFormData, ActionFormData } from "@minecraft/server-ui";
 
-const CONFIG_KEY = "deathswap:config"; // 永続化キー
+export const CONFIG_KEY = "deathswap:config"; // 永続化キー
+let waitthisisholyfucksystem = false;
 
 // === デフォルト設定値 ===
 export const config = {
@@ -16,16 +17,23 @@ export const config = {
 
 // === 起動時: 保存された設定をロード ===
 export function loadConfig() {
-    try {
-        const raw = world.getDynamicProperty(CONFIG_KEY);
-        if (raw) {
-            const parsed = JSON.parse(raw);
-            Object.assign(config, parsed); // デフォルトとマージ
+    world.afterEvents.playerSpawn.subscribe((ev) => {
+        if (!ev.initialSpawn) return; // 死に戻りは無視
+        if(waitthisisholyfucksystem) return;
+        try {
+            const raw = world.getDynamicProperty(CONFIG_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                Object.assign(config, parsed);
+                console.warn("[Death_Swap] Config loaded successfully.");
+            }
+            waitthisisholyfucksystem = true;
+        } catch (e) {
+            console.warn("[Death_Swap] Config load error:", e);
         }
-    } catch (e) {
-        console.warn("[Death_Swap] Config load error:", e);
-    }
+    });
 }
+
 
 // === 設定を保存 ===
 function saveConfig() {
@@ -71,16 +79,14 @@ function openSettingsUI(player) {
     const form = new ModalFormData()
         .title("ゲーム設定")
         .toggle("キルパールを有効化する", { defaultValue: config.killPearl })
-        .slider("初期TP範囲（ブロック）", 5000, 100000, { valueStep: 1000, defaultValue: config.tpRange })
-        .slider("プレイヤー間の最小距離", 500, 2000, { valueStep: 100, defaultValue: config.tpMinDistance })
-        .textField("スワップまでの最小時間", "(分)", String(config.swapMinTime ?? 2))
-        .textField("スワップまでの最大時間", "(分)", String(config.swapMaxTime ?? 3))
-        .textField("警告時間", "(秒)前からカウントダウンを始める", String(config.warningTime ?? 10))
-        .submitButton("§9変更を適用する");
-
+        .slider("初期TP範囲（ブロック）", 5000, 100000, { valueStep: 1000, defaultValue: config.tpRange ?? 10000 })
+        .slider("プレイヤー間の最小距離", 500, 2000, { valueStep: 100, defaultValue: config.tpMinDistance ?? 600 })
+        .slider("スワップまでの最小時間", 1, 60, { valueStep: 1, defaultValue: config.swapMinTime ?? 2 })
+        .slider("スワップまでの最大時間", 1, 60, { valueStep: 1, defaultValue: config.swapMaxTime ?? 3 })
+        .slider("警告時間(秒)", 5, 60, { valueStep: 1, defaultValue: config.warningTime ?? 10 })
+        .submitButton("§9変更を適応する");
     form.show(player).then((res) => {
         if (res.canceled) {
-            player.sendMessage("§7[Death_Swap] 設定はキャンセルされました。");
             return;
         }
 
@@ -89,9 +95,9 @@ function openSettingsUI(player) {
         config.killPearl     = values[0];
         config.tpRange       = Number(values[1]) || config.tpRange;
         config.tpMinDistance = Number(values[2]) || config.tpMinDistance;
-        config.swapMinTime   = parseInt(values[3]) || config.swapMinTime;
-        config.swapMaxTime   = parseInt(values[4]) || config.swapMaxTime;
-        config.warningTime   = parseInt(values[5]) || config.warningTime;
+        config.swapMinTime   = Number(values[3]) || config.swapMinTime;
+        config.swapMaxTime   = Number(values[4]) || config.swapMaxTime;
+        config.warningTime   = Number(values[5]) || config.warningTime;
 
         saveConfig(); // 保存
         player.sendMessage("§a[Death_Swap] 設定を更新しました。");

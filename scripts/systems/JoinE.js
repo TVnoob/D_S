@@ -1,6 +1,6 @@
 //JoinE.js
 import { world, ItemStack } from "@minecraft/server";
-import { startedGame } from "./gamescripts/gamedamon.js";
+import { startedGame, joinedPlayers, Endgame } from "./gamescripts/gamedamon.js";
 import { mainPlayers } from "./gamescripts/notjoins.js";
 import { isHost, getHostId } from "./getowuner.js";
 
@@ -62,12 +62,11 @@ export function playereventinworld(){
         dead.runCommand("gamemode spectator");
         // アナウンス
         world.sendMessage(`§c[Death_Swap] ${dead.nameTag} は脱落しました。`);
+        if (joinedPlayers.length === 1) { // 勝者トリガー
+            Endgame();
+        }
     });
 }
-
-// ==================================================
-// === ヘルパー関数 ===
-// ==================================================
 
 /**
  * オーナー専用の ConfigUI を再配布する

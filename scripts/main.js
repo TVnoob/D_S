@@ -7,7 +7,7 @@ import { startgameinthedeathswapsurvivalminigame, ingorestopgame } from "./syste
 import { loadmainsystematfirsttp } from "./systems/gamescripts/firsttp";
 import { configuisetupfunction, loadConfig } from "./systems/config";
 import { sendchatchecker } from "./systems/gamescripts/notjoins";
-//import { setupBoard } from "./systems/gamescripts/board";
+import { sucsesstoloadboard } from "./systems/gamescripts/board";
 import { registerHostOnJoin } from "./systems/getowuner";
 // test();
 startgameinthedeathswapsurvivalminigame();
@@ -19,5 +19,5 @@ loadmainsystematfirsttp();
 configuisetupfunction();
 loadConfig();
 sendchatchecker();
-//setupBoard();
+sucsesstoloadboard();
 registerHostOnJoin();
