@@ -11,6 +11,7 @@ let countdownActive = false;
 let boardIntervalId = null; 
 
 
+
 /**
  * アクションバー更新
  */
@@ -18,23 +19,13 @@ function updateActionbar() {
     const dim = world.getDimension("overworld");
 
     const remainingPlayers = joinedPlayers.size;
-    const elapsedMin = Math.floor(elapsedSeconds / 60);
-    const elapsedSec = elapsedSeconds % 60;
-    const elapsedStr = `${String(elapsedMin).padStart(2, "0")}:${String(elapsedSec).padStart(2, "0")}`;
 
-    let remainingStr = "--:--";
-    if (swapTargetTime !== null) {
-        const remaining = swapTargetTime - elapsedSeconds;
-        if (remaining <= 0) {
-            remainingStr = "00:00";
-        } else {
-            const rMin = Math.floor(remaining / 60);
-            const rSec = remaining % 60;
-            remainingStr = `${String(rMin).padStart(2, "0")}:${String(rSec).padStart(2, "0")}`;
-        }
-    }
+    // ラウンド経過時間を mm:ss に整形
+    const roundMin = Math.floor(roundElapsedSeconds / 60);
+    const roundSec = roundElapsedSeconds % 60;
+    const roundStr = `${String(roundMin).padStart(2, "0")}:${String(roundSec).padStart(2, "0")}`;
 
-    const message = `§e残り人数: ${remainingPlayers} §7| §a経過: ${elapsedStr} §7`;
+    const message = `§e残り人数: ${remainingPlayers} §7| §a経過: ${roundStr}`;
     dim.runCommand(`title @a actionbar "${message}"`);
 }
 
@@ -45,9 +36,9 @@ function setNextSwapTime() {
     const minSec = config.swapMinTime * 60;
     const maxSec = config.swapMaxTime * 60;
     const rand = Math.floor(Math.random() * (maxSec - minSec + 1)) + minSec;
-    swapTargetTime = elapsedSeconds + rand;
-    countdownActive = false;
-    console.warn(`[Death_Swap] 次のスワップは ${rand} 秒後 (残り: ${swapTargetTime - elapsedSeconds}s)`);
+
+    swapTargetTime = elapsedSeconds + rand; // 累計経過時間に対して設定
+    console.warn(`[Death_Swap] 次のスワップは ${rand} 秒後 (予定時刻=${swapTargetTime})`);
 }
 
 /**
@@ -55,29 +46,30 @@ function setNextSwapTime() {
  */
 function tickBoard() {
     elapsedSeconds++;
+    roundElapsedSeconds++;
 
-    // スワップ時間に近づいたら警告
     if (swapTargetTime !== null) {
         const remaining = swapTargetTime - elapsedSeconds;
 
+        // カウントダウン
         if (remaining > 0 && remaining <= config.warningTime) {
             world.sendMessage(`§e[Death_Swap] スワップまで残り ${remaining} 秒！`);
         }
 
+        // スワップ発動
         if (remaining <= 0) {
-            // スワップ発動イベント送信
             system.run(() => {
-                // キルパール処理（有効時のみ）
                 if (config.killPearl) {
                     try {
                         world.getDimension("overworld").runCommand("kill @e[type=ender_pearl]");
                     } catch {}
                 }
                 world.sendMessage("§c[Death_Swap] Swap!");
-                elapsedSeconds = 0;
                 swapPlayers();
             });
-            setNextSwapTime(); // 次のスワップを予約
+
+            setNextSwapTime();       // 次回スワップ設定
+            roundElapsedSeconds = 0; // ラウンド経過時間をリセット
         }
     }
 
