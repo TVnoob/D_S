@@ -16,9 +16,9 @@ export function originalitemscriptfucktion(){
                 // エントリー付与
                 if (!player.hasTag("entry")) {
                     player.addTag("entry");
-                    player.sendMessage("§aゲームに参加しました!");
+                    player.sendMessage("§aゲームの参加を申請しました");
                 } else {
-                    player.sendMessage("§eすでに参加登録済みです。");
+                    player.sendMessage("§eすでに参加申請済みです。");
                 }
                 break;
 
@@ -30,9 +30,9 @@ export function originalitemscriptfucktion(){
                 // 観戦者付与
                 if (!player.hasTag("spec")) {
                     player.addTag("spec");
-                    player.sendMessage("§7観戦者になりました。");
+                    player.sendMessage("§7観戦者の申請をしました");
                 } else {
-                    player.sendMessage("§eすでに観戦者です。");
+                    player.sendMessage("§eすでに観戦者の申請をしています。");
                 }
                 break;
 

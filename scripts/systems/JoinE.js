@@ -62,7 +62,7 @@ export function playereventinworld(){
         dead.runCommand("gamemode spectator");
         // アナウンス
         world.sendMessage(`§c[Death_Swap] ${dead.nameTag} は脱落しました。`);
-        if (joinedPlayers.length === 1) { // 勝者トリガー
+        if (joinedPlayers.size === 1) { // 勝者トリガー
             Endgame();
         }
     });

@@ -7,7 +7,7 @@
     },
     "components": {
       "minecraft:icon": {
-        "texture": "configcmd"
+        "texture": "join"
       },
       "minecraft:can_destroy_in_creative": false,
       "minecraft:damage": 0,
