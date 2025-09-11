@@ -63,7 +63,7 @@ export function playereventinworld(){
         // アナウンス
         world.sendMessage(`§c[Death_Swap] ${dead.nameTag} は脱落しました。`);
         if (joinedPlayers.size === 1) { // 勝者トリガー
-            Endgame();
+            Endgame(); // gamedamon.jsに
         }
     });
 }
@@ -103,7 +103,6 @@ export function distributeJoinSpectatorItems(player) {
  * ゲーム終了時：全員にアイテム再配布
  */
 export function redistributeItems() {
-    const isAdmin = getAdminList();
     const players = world.getPlayers();
 
     for (const player of players) {

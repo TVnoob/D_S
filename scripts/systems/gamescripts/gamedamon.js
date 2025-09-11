@@ -26,8 +26,10 @@ export function startgameinthedeathswapsurvivalminigame(){
 
 // === ゲーム開始処理 ===
 function startGame() {
+    system.run(() => {
     joinedPlayers.clear();
     startedGame = true;
+    world.getDimension("overworld").runCommand("clear @a")
     world.sendMessage("§3現在、このアドオンはアルファ版です。効果音などは無く、予期せぬ動作が起こるかもしれません。");
     world.sendMessage("§eゲームが開始されました");
 
@@ -60,7 +62,8 @@ function startGame() {
     setupSpectatorList();
     setTimeout(() => {
         world.getDimension("overworld").runCommand("gamerule falldamage true")
-    }, 5000);
+    }, 20);
+    });
 }
 export function ingorestopgame(){
     world.beforeEvents.chatSend.subscribe((ev) => {
@@ -127,13 +130,43 @@ export function ingorestopgame(){
             world.sendMessage("§c[Debug-System] Stop script of the action bar");
         }
 
+        if (msg === "!D_Mstart") {
+            system.run(() => {
+            ev.cancel = true;
+
+            if (isHost(player.id)) {
+                player.sendMessage("§c[Death_Swap] あなたはオーナーではないため実行できません。");
+                return;
+            }
+            joinedPlayers.clear();
+            joinedPlayers.set(player.id, player);
+            world.getDimension("overworld").runCommand("clear @a")
+            player.sendMessage(`§e参加人数: ${joinedPlayers.size}人`);
+            world.getDimension("overworld").runCommand("gamerule falldamage false");
+            doFirstTP(joinedPlayers);
+            setupBoard();
+            if (joinedPlayers.size === 1) { // 勝者トリガー
+            system.runTimeout(() => {
+                world.getDimension("overworld").runCommand("gamerule falldamage false");
+                Endgame();
+                world.sendMessage("§c[Debug-System] 疑似スタート＆終了");
+             },100);
+            }
+        });
+        }
+
     })
 }
 
 export function Endgame(){
-
+    const [winnerId, winnerPlayer] = joinedPlayers.entries().next().value;
+    localspecialscriptfk(winnerPlayer);
+}
+function localspecialscriptfk(winner){
+    system.runTimeout(() => {
     world.sendMessage("§b勝者が決定しました");
-    world.sendMessage("§b");// 勝者を発表する
+    world.sendMessage(`§b勝者 §l${winner.nameTag} `);// 勝者を発表する
     redistributeItems();
     stopBoard();
+    },20);
 }
