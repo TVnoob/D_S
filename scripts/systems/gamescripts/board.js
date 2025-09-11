@@ -9,11 +9,22 @@ let countdownActive = false;
 let intervalHandle = null;
 
 // === スコアボード初期化 ===
-function initScoreboards() {
-    try {
-        world.getDimension("overworld").runCommand("scoreboard objectives add deathswap dummy DeathSwap");
-    } catch {}
-    world.getDimension("overworld").runCommand("scoreboard objectives setdisplay sidebar deathswap");
+export function initScoreboards() {
+    if (scoreboardInitialized) return;
+
+    // 0.5秒 遅延して試行（軽量な安定策）
+    setTimeout(() => {
+        system.run(() => {
+            try {
+                world.getDimension("overworld").runCommand("scoreboard objectives add deathswap dummy DeathSwap");
+            } catch {}
+            try {
+                world.getDimension("overworld").runCommand("scoreboard objectives setdisplay sidebar deathswap");
+            } catch {}
+            scoreboardInitialized = true;
+            console.warn("[Death_Swap] Scoreboard initialized");
+        });
+    },500);
 }
 
 // === 経過時間を mm:ss に変換 ===
