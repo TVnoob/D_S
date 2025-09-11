@@ -3,14 +3,13 @@
 import { playereventinworld } from "./systems/JoinE";
 import { originalitemscriptfucktion } from "./systems/itemsScript";
 import { loadmainsystem } from "./systems/gamescripts/tpcode";
-import { startgameinthedeathswapsurvivalminigame, ingorestopgame } from "./systems/gamescripts/gamedamon";
+import { ingorestopgame } from "./systems/gamescripts/gamedamon";
 import { loadmainsystematfirsttp } from "./systems/gamescripts/firsttp";
 import { configuisetupfunction, loadConfig } from "./systems/config";
 import { sendchatchecker } from "./systems/gamescripts/notjoins";
 import { sucsesstoloadboard } from "./systems/gamescripts/board";
 import { registerHostOnJoin } from "./systems/getowuner";
 // test();
-startgameinthedeathswapsurvivalminigame();
 ingorestopgame();
 loadmainsystem();
 playereventinworld();

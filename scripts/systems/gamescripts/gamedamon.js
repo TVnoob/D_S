@@ -1,7 +1,7 @@
 // gamedamon.js
 import { world, system } from "@minecraft/server";
 import { mainPlayers, setupSpectatorList } from "./notjoins";
-import { redistributeItems } from "../JoinE.js";
+import { redistributeItems, giveOwnerConfigUI, distributeJoinSpectatorItems } from "../JoinE.js";
 import { isHost, getHostId } from "../getowuner.js";
 import { setupBoard, stopBoard } from "./board.js";
 import { CONFIG_KEY } from "../config.js";
@@ -13,14 +13,12 @@ export const joinedPlayers = new Map(); // 参加プレイヤー (id → player)
 
 // === スクリプトイベント受信 ===
 export function startgameinthedeathswapsurvivalminigame(){
-    system.afterEvents.scriptEventReceive.subscribe((ev) => {
-        if (ev.id === "ds:start") {
-            if (startedGame) {
-                ev.sourceEntity?.sendMessage("§eゲームはすでに開始されています。");
-                return;
-            }
-            startGame();
+    system.run(() => {
+        if (startedGame) {
+            world.sendMessage("§eゲームはすでに開始されています。");
+            return;
         }
+        startGame();
     });
 }
 
@@ -60,9 +58,9 @@ function startGame() {
     doFirstTP(joinedPlayers);
     setupBoard();
     setupSpectatorList();
-    setTimeout(() => {
+    system.runTimeout(() => {
         world.getDimension("overworld").runCommand("gamerule falldamage true")
-    }, 20);
+    }, 200);
     });
 }
 export function ingorestopgame(){
@@ -71,6 +69,7 @@ export function ingorestopgame(){
         const msg = ev.message.trim();
 
         if (msg === "!dsstop") {
+            system.run(() => {
             ev.cancel = true;
 
             if (isHost(player.id)) {
@@ -88,9 +87,10 @@ export function ingorestopgame(){
             joinedPlayers.clear();
             mainPlayers.length = 0;
 
-            redistributeItems(); // アイテムを再配布
+            redistributeItems();
             world.sendMessage("§c[Death_Swap] ゲームが緊急停止されました。");
             stopBoard();
+        });
         }
 
         if (msg === "!D_Creset") {

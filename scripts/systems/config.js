@@ -1,6 +1,7 @@
 // config.js
 import { world, system } from "@minecraft/server";
 import { ModalFormData, ActionFormData } from "@minecraft/server-ui";
+import { startgameinthedeathswapsurvivalminigame } from "./gamescripts/gamedamon";
 
 export const CONFIG_KEY = "deathswap:config"; // 永続化キー
 let waitthisisholyfucksystem = false;
@@ -69,7 +70,7 @@ function openMainConfigUI(player) {
         if (res.selection === 0) {
             openSettingsUI(player);
         } else if (res.selection === 1) {
-            system.runCommand("scriptevent ds:start");
+            startgameinthedeathswapsurvivalminigame();
         }
     });
 }

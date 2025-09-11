@@ -1,4 +1,5 @@
 import { joinedPlayers } from "./gamedamon.js";
+import { world, system } from "@minecraft/server";
 
 // === 配列をランダムシャッフルする関数 ===
 function shuffleArray(array) {
@@ -11,6 +12,7 @@ function shuffleArray(array) {
 
 // === スワップ処理（円順列TP） ===
 export function swapPlayers() {
+    system.run(() => {
     const players = Array.from(joinedPlayers.values());
 
     if (players.length < 2) {
@@ -37,6 +39,7 @@ export function swapPlayers() {
     }
 
     console.warn("プレイヤーのスワップを実行しました。");
+    });
 }
 export function loadmainsystem(){
     console.warn("tpcode.js was loaded");

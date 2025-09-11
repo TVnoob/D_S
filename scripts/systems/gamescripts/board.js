@@ -1,9 +1,11 @@
 import { world, system } from "@minecraft/server";
 import { joinedPlayers } from "./gamedamon.js";
 import { config } from "../config.js";
+import { swapPlayers } from "./tpcode.js";
 
 // === グローバル管理 ===
 let elapsedSeconds = 0;
+let roundElapsedSeconds = 0;
 let swapTargetTime = null;
 let countdownActive = false;
 let boardIntervalId = null; 
@@ -73,7 +75,7 @@ function tickBoard() {
                 }
                 world.sendMessage("§c[Death_Swap] Swap!");
                 elapsedSeconds = 0;
-                world.getDimension("overworld").runCommand("scriptevent ds:swap");
+                swapPlayers();
             });
             setNextSwapTime(); // 次のスワップを予約
         }
