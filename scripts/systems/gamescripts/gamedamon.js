@@ -59,11 +59,12 @@ function startGame() {
     setupBoard();
     setupSpectatorList();
     system.runTimeout(() => {
-    world.getDimension("overworld").runCommand("playsound mob.enderdragon.growl @a");
-    world.getDimension("overworld").runCommand("title @a title Death-Swap Start");
+        world.getDimension("overworld").runCommand("playsound mob.enderdragon.growl @a");
+        world.getDimension("overworld").runCommand("title @a title Death-Swap Start");
     },100);
     system.runTimeout(() => {
         world.getDimension("overworld").runCommand("gamerule falldamage true")
+        world.sendMessage("落下ダメージが有効になりました");
     }, 200);
     });
 }
