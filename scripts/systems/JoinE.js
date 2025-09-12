@@ -63,7 +63,7 @@ export function playereventinworld(){
         // アナウンス
         world.sendMessage(`§c[Death_Swap] ${dead.nameTag} は脱落しました。`);
         world.getDimension("overworld").runCommand("playsound mob.wither.spawn @a");
-        if (joinedPlayers.size === 1) { // 勝者トリガー
+        if (joinedPlayers.size === 1) {
             Endgame(); // gamedamon.jsに
         }
     });

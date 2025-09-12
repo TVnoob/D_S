@@ -30,7 +30,6 @@ function startGame() {
     world.getDimension("overworld").runCommand("clear @a")
     world.sendMessage("§3現在、このアドオンはアルファ版です。効果音などは無く、予期せぬ動作が起こるかもしれません。");
     world.sendMessage("§eゲームが開始されました");
-    world.getDimension("overworld").runCommand("playsound mob.enderdragon.growl @a");
 
     // 全プレイヤーを取得
     const players = world.getPlayers();
@@ -59,6 +58,10 @@ function startGame() {
     doFirstTP(joinedPlayers);
     setupBoard();
     setupSpectatorList();
+    system.runTimeout(() => {
+    world.getDimension("overworld").runCommand("playsound mob.enderdragon.growl @a");
+    world.getDimension("overworld").runCommand("title @a title Death-Swap Start");
+    },100);
     system.runTimeout(() => {
         world.getDimension("overworld").runCommand("gamerule falldamage true")
     }, 200);
@@ -167,8 +170,8 @@ function localspecialscriptfk(winner){
     system.runTimeout(() => {
     world.sendMessage("§b勝者が決定しました");
     world.sendMessage(`§b勝者 §l${winner.nameTag} `);// 勝者を発表する
-    world.getDimension("overworld").runCommand("playsound ui.toast.challenge_complete @a");
+    world.getDimension("overworld").runCommand("playsound block.end_portal.spawn @a");
     redistributeItems();
     stopBoard();
-    },20);
+    },80);
 }
