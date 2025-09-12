@@ -54,6 +54,7 @@ function tickBoard() {
         // カウントダウン
         if (remaining > 0 && remaining <= config.warningTime) {
             world.sendMessage(`§e[Death_Swap] スワップまで残り ${remaining} 秒！`);
+            world.getDimension("overworld").runCommand("playsound random.click @a");
         }
 
         // スワップ発動
@@ -65,6 +66,7 @@ function tickBoard() {
                     } catch {}
                 }
                 world.sendMessage("§c[Death_Swap] Swap!");
+                world.getDimension("overworld").runCommand("playsound random.levelup @a");
                 swapPlayers();
             });
 

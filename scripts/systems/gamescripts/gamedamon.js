@@ -30,6 +30,7 @@ function startGame() {
     world.getDimension("overworld").runCommand("clear @a")
     world.sendMessage("§3現在、このアドオンはアルファ版です。効果音などは無く、予期せぬ動作が起こるかもしれません。");
     world.sendMessage("§eゲームが開始されました");
+    world.getDimension("overworld").runCommand("playsound mob.enderdragon.growl @a");
 
     // 全プレイヤーを取得
     const players = world.getPlayers();
@@ -157,8 +158,8 @@ export function ingorestopgame(){
 
     })
 }
-
-export function Endgame(){
+// 
+export function Endgame(){ // Endgameのくせにオブジェクトの仕様のせいで別functionが必要になってしまった
     const [winnerId, winnerPlayer] = joinedPlayers.entries().next().value;
     localspecialscriptfk(winnerPlayer);
 }
@@ -166,6 +167,7 @@ function localspecialscriptfk(winner){
     system.runTimeout(() => {
     world.sendMessage("§b勝者が決定しました");
     world.sendMessage(`§b勝者 §l${winner.nameTag} `);// 勝者を発表する
+    world.getDimension("overworld").runCommand("playsound ui.toast.challenge_complete @a");
     redistributeItems();
     stopBoard();
     },20);

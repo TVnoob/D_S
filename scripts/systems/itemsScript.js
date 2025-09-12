@@ -30,7 +30,7 @@ export function originalitemscriptfucktion(){
                 // 観戦者付与
                 if (!player.hasTag("spec")) {
                     player.addTag("spec");
-                    player.sendMessage("§7観戦者の申請をしました");
+                    player.sendMessage("§g観戦者の申請をしました");
                 } else {
                     player.sendMessage("§eすでに観戦者の申請をしています。");
                 }

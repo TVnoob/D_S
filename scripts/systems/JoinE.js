@@ -23,7 +23,7 @@ export function playereventinworld(){
         // === ゲーム開始後に入ってきたプレイヤーは観戦者にする ===
         if (startedGame === true) {
             player.addTag("spec");
-            player.sendMessage("§7[Death_Swap] ゲームはすでに開始されています。観戦者として参加します。");
+            player.sendMessage("[Death_Swap] ゲームはすでに開始されています。観戦者として参加します。");
             player.runCommand("gamemode spectator");
             return;
         }
@@ -62,6 +62,7 @@ export function playereventinworld(){
         dead.runCommand("gamemode spectator");
         // アナウンス
         world.sendMessage(`§c[Death_Swap] ${dead.nameTag} は脱落しました。`);
+        world.getDimension("overworld").runCommand("playsound mob.wither.spawn @a");
         if (joinedPlayers.size === 1) { // 勝者トリガー
             Endgame(); // gamedamon.jsに
         }
