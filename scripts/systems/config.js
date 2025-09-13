@@ -62,7 +62,7 @@ function openMainConfigUI(player) {
     const form = new ActionFormData()
         .title("DeathSwap - メニュー")
         .body("設定を行うか、ゲームを開始してください。")
-        .button("⚙ 設定UIを開く")
+        .button("⚙ 設定UIを開く","textures/RP/items/cmd.png")
         .button("▶ ゲームを開始する");
 
     form.show(player).then((res) => {

@@ -9,6 +9,7 @@ import { configuisetupfunction, loadConfig } from "./systems/config";
 import { sendchatchecker } from "./systems/gamescripts/notjoins";
 import { sucsesstoloadboard } from "./systems/gamescripts/board";
 import { registerHostOnJoin } from "./systems/getowuner";
+import { Detecthit00154 } from "./testcode"; // test
 // test();
 ingorestopgame();
 loadmainsystem();
@@ -20,3 +21,4 @@ loadConfig();
 sendchatchecker();
 sucsesstoloadboard();
 registerHostOnJoin();
+Detecthit00154(); // test
