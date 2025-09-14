@@ -256,42 +256,45 @@ export function testloadingfunction() {
         }
     },20);
 }
-function byusystem001(player,requiredCount){
-  system.run(() => {
-    const inventory = player.getComponent("inventory").container;
+export function byusystem001(player, requiredCount) {
+    const invComp = player.getComponent("minecraft:inventory");
+    if (!invComp) return false;
+    const inventory = invComp.container;
 
-    let totalDiamonds = 0;
-    for (let i = 0; i < inventory.size; i++) {
-        const item = inventory.getItem(i);
-        if (item && item.typeId === "nico:houseki") { // ここを
-            totalDiamonds += item.amount;
-        }
-    }
-
-    if (totalDiamonds < requiredCount) {
-        player.sendMessage(`§cダイヤが足りません (${totalDiamonds}/${requiredCount})`);
-        return false; // 足りない → false で関門NG
-    }
-
-    // ダイヤ消費
-    let remainingToRemove = requiredCount;
+    // 持っている合計数を数える
+    let total = 0;
     for (let i = 0; i < inventory.size; i++) {
         const item = inventory.getItem(i);
         if (item && item.typeId === "nico:houseki") {
-            if (item.amount > remainingToRemove) {
-                item.amount -= remainingToRemove;
-                inventory.setItem(i, item);
-                remainingToRemove = 0;
-                break;
-            } else {
-                remainingToRemove -= item.amount;
-                inventory.setItem(i, null);
-            }
+            total += item.amount;
         }
     }
 
-    player.sendMessage(`§a${requiredCount}個のダイヤを消費しました！`);
-    return true; // 成功
-  });
+    if (total < requiredCount) {
+        player.sendMessage(`§c宝石が足りません (${total}/${requiredCount})`);
+        return false;
+    }
 
+    // 必要分を消費する
+    let remaining = requiredCount;
+    for (let i = 0; i < inventory.size; i++) {
+        const item = inventory.getItem(i);
+        if (!item) continue;
+        if (item.typeId !== "nico:houseki") continue;
+
+        if (item.amount > remaining) {
+            // スロット内の数を減らして戻す
+            item.amount = item.amount - remaining;
+            inventory.setItem(i, item);
+            remaining = 0;
+            break;
+        } else {
+            // スロットを空にする
+            remaining -= item.amount;
+            inventory.setItem(i, null);
+        }
+    }
+
+    player.sendMessage(`§a${requiredCount}個の宝石を消費しました！`);
+    return true;
 }
