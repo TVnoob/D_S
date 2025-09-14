@@ -1,26 +1,26 @@
 // main.js
 // import { test } from "./systems/test";
-import { playereventinworld } from "./systems/JoinE";
-import { originalitemscriptfucktion } from "./systems/itemsScript";
-import { loadmainsystem } from "./systems/gamescripts/tpcode";
-import { ingorestopgame } from "./systems/gamescripts/gamedamon";
-import { loadmainsystematfirsttp } from "./systems/gamescripts/firsttp";
-import { configuisetupfunction, loadConfig } from "./systems/config";
-import { sendchatchecker } from "./systems/gamescripts/notjoins";
-import { sucsesstoloadboard } from "./systems/gamescripts/board";
-import { registerHostOnJoin } from "./systems/getowuner";
+//import { playereventinworld } from "./systems/JoinE";
+//import { originalitemscriptfucktion } from "./systems/itemsScript";
+//import { loadmainsystem } from "./systems/gamescripts/tpcode";
+//import { ingorestopgame } from "./systems/gamescripts/gamedamon";
+//import { loadmainsystematfirsttp } from "./systems/gamescripts/firsttp";
+//import { configuisetupfunction, loadConfig } from "./systems/config";
+//import { sendchatchecker } from "./systems/gamescripts/notjoins";
+//import { sucsesstoloadboard } from "./systems/gamescripts/board";
+//import { registerHostOnJoin } from "./systems/getowuner";
 import { Detecthit00154 } from "./testcode"; // test
 import { testloadingfunction } from "./systems/shopUI"; // test
 // test();
-ingorestopgame();
-loadmainsystem();
-playereventinworld();
-originalitemscriptfucktion();
-loadmainsystematfirsttp();
-configuisetupfunction();
-loadConfig();
-sendchatchecker();
-sucsesstoloadboard();
-registerHostOnJoin();
+//ingorestopgame();
+//loadmainsystem();
+//playereventinworld();
+//originalitemscriptfucktion();
+//loadmainsystematfirsttp();
+//configuisetupfunction();
+//loadConfig();
+//sendchatchecker();
+//sucsesstoloadboard();
+//registerHostOnJoin();
 Detecthit00154(); // test
 testloadingfunction(); // test
