@@ -10,6 +10,7 @@ import { sendchatchecker } from "./systems/gamescripts/notjoins";
 import { sucsesstoloadboard } from "./systems/gamescripts/board";
 import { registerHostOnJoin } from "./systems/getowuner";
 import { Detecthit00154 } from "./testcode"; // test
+import { testloadingfunction } from "./systems/shopUI"; // test
 // test();
 ingorestopgame();
 loadmainsystem();
@@ -22,3 +23,4 @@ sendchatchecker();
 sucsesstoloadboard();
 registerHostOnJoin();
 Detecthit00154(); // test
+testloadingfunction(); // test
