@@ -246,6 +246,15 @@ function testOpenUI(player) {
         });
     });
 }
+/** 
+ * コマンドでの使い方
+ * 
+ * (/)scriptevent nico:check_shop
+ * 
+ *  tag add (@p) ShopP
+ * 
+ * の2つが存在すれば安定した引数と個別の開始を送れると思われる
+ * */ 
 export function testloadingfunction() {
     system.afterEvents.scriptEventReceive.subscribe(ev => {
         if (ev.id === "nico:check_shop") {
