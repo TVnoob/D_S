@@ -11,6 +11,7 @@
 //import { registerHostOnJoin } from "./systems/getowuner";
 import { Detecthit00154 } from "./testcode"; // test
 import { testloadingfunction } from "./systems/shopUI"; // test
+import { resetCards,scripttingsystems } from "./systems/cardSystem";
 // test();
 //ingorestopgame();
 //loadmainsystem();
@@ -24,3 +25,5 @@ import { testloadingfunction } from "./systems/shopUI"; // test
 //registerHostOnJoin();
 Detecthit00154(); // test
 testloadingfunction(); // test
+resetCards();
+scripttingsystems()

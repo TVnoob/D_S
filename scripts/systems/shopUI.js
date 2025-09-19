@@ -19,7 +19,6 @@ function openShopsenntakuUI(player) { // playerは@p
 }
 
 function othershopUI(player){
-  system.run(() => {
     const form = new ActionFormData()
         .title("Shop")
         .body("通常shop商品")
@@ -108,11 +107,9 @@ function othershopUI(player){
       player.runCommand("give @s wooden_sword");
       }
     });
-  });
 }
 
 function testOpenUI(player) {
-  system.run(() => {
     const form = new ActionFormData()
         .title("Shop")
         .body("通常shop商品")
@@ -244,7 +241,6 @@ function testOpenUI(player) {
         }
         // 必要に応じてif (res.selection === Num) {}を増やす
     });
-  });
 }
 export function testloadingfunction() {
     system.runInterval(() => {
