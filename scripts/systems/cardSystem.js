@@ -68,7 +68,7 @@ export function distributeCards() {
         for (const player of world.getPlayers()) {
         // アイテムをランダムに選ぶ
         const item = SEARCH_ITEMS[Math.floor(Math.random() * SEARCH_ITEMS.length)];
-        player.addTag(`Item_${item}`);
+        player.addTag(`${item}`);
         player.sendMessage(`§b[SearchSystem] あなたの捜索アイテムは「${item}」です！`);
         }
         world.sendMessage("§b[CardSystem] カード配布が完了しました!");
@@ -139,6 +139,6 @@ function clearCardTags(entity) {
         entity.removeTag(`Target_${card}`);
     }
     for (const item of SEARCH_ITEMS) {
-    entity.removeTag(`Item_${item}`);
+    entity.removeTag(`${item}`);
   }
 }
