@@ -2,6 +2,13 @@ import { world,system } from "@minecraft/server";
 
 const CARD_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
+// 捜索アイテムのリスト
+const SEARCH_ITEMS = [
+  "hane",      // 羽
+  // ここにどんどん追加していける
+];
+
+
 // === カード配布処理 ===
 export function distributeCards() {
     system.run(() => {
@@ -58,7 +65,12 @@ export function distributeCards() {
                 entity.sendMessage(`§eあなたの目標カードは「${targetCard}」です！`);
             }
         });
-
+        for (const player of world.getPlayers()) {
+        // アイテムをランダムに選ぶ
+        const item = SEARCH_ITEMS[Math.floor(Math.random() * SEARCH_ITEMS.length)];
+        player.addTag(`Item_${item}`);
+        player.sendMessage(`§b[SearchSystem] あなたの捜索アイテムは「${item}」です！`);
+        }
         world.sendMessage("§b[CardSystem] カード配布が完了しました!");
     });
 }
@@ -126,4 +138,7 @@ function clearCardTags(entity) {
         entity.removeTag(`Card_${card}`);
         entity.removeTag(`Target_${card}`);
     }
+    for (const item of SEARCH_ITEMS) {
+    entity.removeTag(`Item_${item}`);
+  }
 }
