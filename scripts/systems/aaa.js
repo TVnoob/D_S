@@ -1,47 +1,31 @@
-import { world, system, ItemStack, BlockPermutation, Player } from "@minecraft/server";
-export function loadsystem002(){
-world.afterEvents.itemUse.subscribe(arg => {
-  if (arg.itemStack.typeId === 'nico:speed') {
-    arg.source.runCommand('effect @p speed 9999 1 true');
-    arg.source.runCommand('particle minecraft:knockback_roar_particle ~ ~ ~');
-    arg.source.runCommand('clear @p nico:speed 0 1');
-  }
+import { world, system } from '@minecraft/server';
+
+let dimension;
+world.afterEvents.worldLoad.subscribe(() => {
+    dimension = world.getDimension(overworld);
 });
-
-
-world.afterEvents.itemUse.subscribe(arg => {
-  if (arg.itemStack.typeId === 'nico:enmaku') {
-    arg.source.runCommand('effect @p invisibility 5 1 true');
-    arg.source.runCommand('effect @p weakness 5 255 true');
-    arg.source.runCommand('particle minecraft:knockback_roar_particle ~ ~ ~');
-    arg.source.runCommand('clear @p nico:enmaku 0 1');
-  }
-});
-
-
-world.afterEvents.itemUse.subscribe(arg => {
-  if (arg.itemStack.typeId === 'nico:ritudou') {
-    arg.source.runCommand('effect @p strength 15 1 true');
-    arg.source.runCommand('particle minecraft:knockback_roar_particle ~ ~ ~');
-    arg.source.runCommand('clear @p nico:ritudou 0 1');
-  }
-});
-
-
-world.afterEvents.itemUse.subscribe(arg => {
-  if (arg.itemStack.typeId === 'nico:yuuki') {
-    arg.source.runCommand('effect @p resistance 15 1 true');
-    arg.source.runCommand('particle minecraft:knockback_roar_particle ~ ~ ~');
-    arg.source.runCommand('clear @p nico:yuuki 0 1');
-  }
-});
-
-
-world.afterEvents.itemUse.subscribe(arg => {
-  if (arg.itemStack.typeId === 'nico:superu') {
-    arg.source.runCommand('effect @p resistance 15 255 true');
-    arg.source.runCommand('particle minecraft:knockback_roar_particle ~ ~ ~');
-    arg.source.runCommand('clear @p nico:superu 0 1');
-  }
+export function loadfunction001(){
+world.beforeEvents.playerInteractWithBlock.subscribe(ev => {
+    const { player, block, itemStack } = ev;
+    system.runTimeout(() => {
+        if (typeof itemStack == 'undefined') return;
+        if (block.typeId == 'minecraft:iron_door') {
+            let location = block.location;
+            location.y = location.y - 4;
+            const chest = dimension.getBlock(location);
+            if (chest.typeId == 'minecraft:furnace') {
+                const container = chest.getComponent('inventory').container;
+                const keyItem = container.getItem(0);
+                if (typeof keyItem == 'undefined') return;
+                if (itemStack.typeId == keyItem.typeId) {
+                    location.y = block.location.y - 3;
+                    dimension.setBlockType(location, 'minecraft:redstone_torch');
+                    try {
+                        player.runCommand('clear @s ' + itemStack.typeId + ' 0 1');
+                    } catch (e) { }
+                }
+            }
+        }
+    });
 });
 }
