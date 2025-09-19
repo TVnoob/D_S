@@ -19,7 +19,6 @@ function openShopsenntakuUI(player) { // playerは@p
 }
 
 function othershopUI(player){
-  system.run(() => {
     const form = new ActionFormData()
         .title("Shop")
         .body("通常shop商品")
@@ -108,11 +107,9 @@ function othershopUI(player){
       player.runCommand("give @s wooden_sword");
       }
     });
-  });
 }
 
 function testOpenUI(player) {
-  system.run(() => {
     const form = new ActionFormData()
         .title("Shop")
         .body("通常shop商品")
@@ -244,17 +241,25 @@ function testOpenUI(player) {
         }
         // 必要に応じてif (res.selection === Num) {}を増やす
     });
-  });
 }
+
+/** 
+ * コマンドでの使い方
+ * (/)scriptevent nico:check_shop
+ *  tag add @p(コマンドブロック及びNPC用) ShopP
+ * の2つが存在すれば安定した引数と個別の開始を送れると思われる
+ * */ 
 export function testloadingfunction() {
-    system.runInterval(() => {
-        for (const player of world.getPlayers()) {
-            if (player.hasTag("ShopP")) {
-                openShopsenntakuUI(player);
-                player.removeTag("ShopP");
+    system.afterEvents.scriptEventReceive.subscribe(ev => {
+        if (ev.id === "nico:check_shop") {
+            for (const player of world.getPlayers()) {
+                if (player.hasTag("ShopP")) {
+                    player.removeTag("ShopP");
+                    openShopsenntakuUI(player);
+                }
             }
         }
-    },20);
+    });
 }
 export function byusystem001(player, requiredCount) {
     const invComp = player.getComponent("minecraft:inventory");
