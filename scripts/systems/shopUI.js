@@ -247,9 +247,9 @@ function testOpenUI(player) {
     });
 }
 /** 
- * 問題点
+ * コマンド
  * 
- * NPCが判定を吸ってしまう!
+ * scriptevent nico:shop
  * 
  * */ 
 export function testloadingfunction() {
