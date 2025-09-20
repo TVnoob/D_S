@@ -247,19 +247,20 @@ function testOpenUI(player) {
     });
 }
 /** 
- * コマンドでの使い方
+ * 問題点
  * 
- * (/)scriptevent nico:check_shop
+ * NPCが判定を吸ってしまう!
  * 
- *  tag (@p) add ShopP
- * 
- * の2つが存在すれば安定した引数と個別の開始を送れると思われる
  * */ 
 export function testloadingfunction() {
-    world.afterEvents.entityHurt.subscribe(ev => {
-        const entity = ev.hurtEntity;
-        openShopsenntakuUI(entity);
-        world.sendMessage("sucsess!")
+    system.afterEvents.scriptEventReceive.subscribe(ev => {
+        if (ev.id === "nico:shop") {
+            for (const player of world.getPlayers()) {
+                system.runTimeout(() => {
+                    openShopsenntakuUI(player);
+                },5);
+            }
+        }
     });
 }
 export function byusystem001(player, requiredCount) {
