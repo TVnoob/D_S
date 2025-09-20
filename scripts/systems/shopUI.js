@@ -2,6 +2,7 @@ import { world, system } from "@minecraft/server";
 import { ModalFormData, ActionFormData } from "@minecraft/server-ui";
 
 function openShopsenntakuUI(player) { // playerは@p
+    player.sendMessage("UIが開けていることを確認")
     const form = new ActionFormData()
         .title("Shopメニュー")
         .body("開くショップを選択してください")
@@ -19,7 +20,6 @@ function openShopsenntakuUI(player) { // playerは@p
 }
 
 function othershopUI(player) {
-    system.run(() => {
         const form = new ActionFormData()
             .title("Shop")
             .body("通常shop商品")
@@ -107,12 +107,10 @@ function othershopUI(player) {
                 if (!byusystem001(player, 4)) return;
                 player.runCommand("give @s wooden_sword");
             }
-        });
     });
 }
 
 function testOpenUI(player) {
-    system.run(() => {
         const form = new ActionFormData()
             .title("Shop")
             .body("通常shop商品")
@@ -243,7 +241,6 @@ function testOpenUI(player) {
                 player.runCommand("give @s arrow");
             }
             // 必要に応じてif (res.selection === Num) {}を増やす
-        });
     });
 }
 /** 
@@ -254,11 +251,15 @@ function testOpenUI(player) {
  * */ 
 export function testloadingfunction() {
     system.afterEvents.scriptEventReceive.subscribe(ev => {
-        if (ev.id === "nico:shop") {
+    if (ev.id === "nico:shop") {
             for (const player of world.getPlayers()) {
-                system.runTimeout(() => {
-                    openShopsenntakuUI(player);
-                },5);
+                if (player.hasTag("ShopP")) {
+                    system.runTimeout(() => {
+                        openShopsenntakuUI(player);
+                        player.sendMessage("開けてる判定です");
+                        player.removeTag("ShopP");
+                    },5);
+                }
             }
         }
     });
