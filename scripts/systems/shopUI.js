@@ -251,20 +251,15 @@ function testOpenUI(player) {
  * 
  * (/)scriptevent nico:check_shop
  * 
- *  tag add (@p) ShopP
+ *  tag (@p) add ShopP
  * 
  * の2つが存在すれば安定した引数と個別の開始を送れると思われる
  * */ 
 export function testloadingfunction() {
-    system.afterEvents.scriptEventReceive.subscribe(ev => {
-        if (ev.id === "nico:check_shop") {
-            for (const player of world.getPlayers()) {
-                if (player.hasTag("ShopP")) {
-                    player.removeTag("ShopP");
-                    openShopsenntakuUI(player);
-                }
-            }
-        }
+    world.afterEvents.entityHurt.subscribe(ev => {
+        const entity = ev.hurtEntity;
+        openShopsenntakuUI(entity);
+        world.sendMessage("sucsess!")
     });
 }
 export function byusystem001(player, requiredCount) {
