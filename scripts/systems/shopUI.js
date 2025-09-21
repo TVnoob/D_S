@@ -2,7 +2,6 @@ import { world, system } from "@minecraft/server";
 import { ModalFormData, ActionFormData } from "@minecraft/server-ui";
 
 function openShopsenntakuUI(player) { // playerは@p
-    player.sendMessage("UIが開けていることを確認")
     const form = new ActionFormData()
         .title("Shopメニュー")
         .body("開くショップを選択してください")
@@ -256,7 +255,6 @@ export function testloadingfunction() {
                 if (player.hasTag("ShopP")) {
                     system.runTimeout(() => {
                         openShopsenntakuUI(player);
-                        player.sendMessage("開けてる判定です");
                         player.removeTag("ShopP");
                     },20);
                 }
