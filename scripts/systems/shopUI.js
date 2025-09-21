@@ -258,7 +258,7 @@ export function testloadingfunction() {
                         openShopsenntakuUI(player);
                         player.sendMessage("開けてる判定です");
                         player.removeTag("ShopP");
-                    },5);
+                    },20);
                 }
             }
         }
