@@ -1,9 +1,5 @@
 import { world, system } from "@minecraft/server";
 
-// ============================
-// 設定値
-// ============================
-
 // PvP & アイテム使用禁止時間（秒）
 const NO_PVP_TIME = 180; // 3分
 
