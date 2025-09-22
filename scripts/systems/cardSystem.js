@@ -135,7 +135,7 @@ export function scripttingsystems(){
             }
         })
 }
-function clearCardTags(entity) {
+export function clearCardTags(entity) {
     for (const card of CARD_LETTERS) {
         entity.removeTag(`Card_${card}`);
         entity.removeTag(`Target_${card}`);

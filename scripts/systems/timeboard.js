@@ -1,4 +1,5 @@
 import { world, system } from "@minecraft/server";
+import { clearCardTags } from "./cardSystem";
 // 制限時間（秒）
 const GAME_LIMIT_TIME = 900;
 let gameElapsedSeconds = 0;
@@ -16,7 +17,7 @@ export function startGameTimer() {
         if (remaining <= 0) {
             world.sendMessage("§c[Game] Time Up!");
             system.clearRun(gameTimer);
-            // ゲーム終了処理呼び出し
+            gameEnd(); // ゲーム終了処理呼び出し
             return;
         }
 
@@ -40,4 +41,12 @@ function checkPlayerCount() {
 }
 export function yomikomudake001(){
     console.warn("timeboard.js was loading.")
+}
+function gameEnd(){ // ここに終了処理を追加
+    for (const player of world.getPlayers()) {
+        clearCardTags(player);
+    }
+    system.run(() => {
+    world.runCommand('tp @a <ロビー座標>');
+});
 }

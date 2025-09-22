@@ -87,6 +87,26 @@ export function setupDeathRules() {
     }
   });
 
+  // === 正しいキル成立時の処理 ===
+  world.afterEvents.entityDie.subscribe(ev => {
+    const victim = ev.deadEntity;
+    const attacker = ev.damageSource?.damagingEntity;
+
+    if (!attacker || attacker.typeId !== "minecraft:player") return;
+    if (victim.typeId !== "minecraft:player") return;
+
+    // ここで再度チェック（誤殺の場合 attacker.kill() で既に死んでいるはずだけど保険）
+    if (!isKillAllowed(attacker, victim)) return;
+
+    // 正当キル → メッセージとタグ付与
+    attacker.sendMessage("§a殺害に成功しました！");
+
+    if (!attacker.hasTag("successKilled")) {
+      attacker.addTag("successKilled");
+      attacker.sendMessage("§b[Info] あなたに残り時間が表示されるようになりました");
+    }
+  });
+
   // === キーアイテムの最終所持者更新 ===
   world.afterEvents.itemPickup.subscribe(ev => {
     const { itemStack, player } = ev;
