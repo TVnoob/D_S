@@ -12,6 +12,7 @@
 import { Detecthit00154 } from "./testcode"; // test
 import { testloadingfunction } from "./systems/shopUI"; // test
 import { resetCards,scripttingsystems } from "./systems/cardSystem";
+import { kinnsisystems,setupLocalChat } from "./systems/kinnsi";
 // test();
 //ingorestopgame();
 //loadmainsystem();
@@ -27,3 +28,5 @@ Detecthit00154(); // test
 testloadingfunction(); // test
 resetCards();
 scripttingsystems()
+kinnsisystems();
+setupLocalChat();

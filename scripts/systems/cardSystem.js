@@ -1,9 +1,9 @@
 import { world,system } from "@minecraft/server";
 
-const CARD_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+export const CARD_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 // 捜索アイテムのリスト
-const SEARCH_ITEMS = [
+export const SEARCH_ITEMS = [
   "hane",      // 羽
   // ここにどんどん追加していける
 ];
@@ -68,7 +68,7 @@ export function distributeCards() {
         for (const player of world.getPlayers()) {
         // アイテムをランダムに選ぶ
         const item = SEARCH_ITEMS[Math.floor(Math.random() * SEARCH_ITEMS.length)];
-        player.addTag(`${item}`);
+        player.addTag(`Item_${item}`);
         player.sendMessage(`§b[SearchSystem] あなたの捜索アイテムは「${item}」です！`);
         }
         world.sendMessage("§b[CardSystem] カード配布が完了しました!");
