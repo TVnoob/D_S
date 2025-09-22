@@ -3,6 +3,8 @@ import { world, system } from "@minecraft/server";
 // PvP & アイテム使用禁止時間（秒）
 const NO_PVP_TIME = 180; // 3分
 
+let StartGame = false;
+
 // デバッグ強制フラグ
 let DebugForbiddance = false;
 
@@ -80,5 +82,32 @@ system.afterEvents.scriptEventReceive.subscribe(ev => {
     world.sendMessage("§a[Debug] PvP & アイテム使用禁止タイマーをリセットしました（3分禁止開始）"); // Debug
     startcount();
   }
+  if (ev.id === "nico:cards"){
+    StartGame = true;
+  }
+  if (ev.id === "nico:end"){ // ゲーム終了時
+    StartGame = false;
+  }
 });
+}
+export function setupLocalChat() {
+  if (!StartGame) return;
+  world.beforeEvents.chatSend.subscribe(ev => {
+    ev.cancel = true; // デフォルトのチャット送信を止める
+
+    const sender = ev.sender;
+    const msg = ev.message;
+
+    // 半径5ブロックのプレイヤーにだけ送信
+    for (const player of world.getPlayers()) {
+      const dx = player.location.x - sender.location.x;
+      const dy = player.location.y - sender.location.y;
+      const dz = player.location.z - sender.location.z;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+      if (dist <= 5) {
+        player.sendMessage(`§7${sender.name}: §f${msg}`);
+      }
+    }
+  });
 }
