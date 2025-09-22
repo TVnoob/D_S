@@ -16,11 +16,28 @@ const BANNED_ITEMS = [ // 仮
 // 経過時間（秒）
 let elapsedSeconds = 0;
 
-// 経過時間カウント
-function startcount(){
-    system.runInterval(() => {
+let timerId = null; // runIntervalIDクリア
+
+// 経過時間カウント開始
+function startcount() {
+  // すでに動作中なら止める
+  if (timerId !== null) {
+    system.clearRun(timerId);
+    timerId = null;
+  }
+
+  elapsedSeconds = 0;
+
+  timerId = system.runInterval(() => {
     elapsedSeconds++;
-    }, 20);
+
+    if (elapsedSeconds >= NO_PVP_TIME) {
+      // タイマー終了
+      system.clearRun(timerId);
+      timerId = null;
+      world.sendMessage("§a[通知] 3分経過しました。PvPとアイテム使用が解禁されます");
+    }
+  }, 20);
 }
 
 export function kinnsisystems(){
