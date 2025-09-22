@@ -13,6 +13,8 @@ import { Detecthit00154 } from "./testcode"; // test
 import { testloadingfunction } from "./systems/shopUI"; // test
 import { resetCards,scripttingsystems } from "./systems/cardSystem";
 import { kinnsisystems,setupLocalChat } from "./systems/kinnsi";
+import { setupDeathRules } from "./systems/death";
+import { yomikomudake001 } from "./systems/timeboard";
 // test();
 //ingorestopgame();
 //loadmainsystem();
@@ -30,3 +32,5 @@ resetCards();
 scripttingsystems()
 kinnsisystems();
 setupLocalChat();
+setupDeathRules();
+yomikomudake001();

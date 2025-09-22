@@ -118,4 +118,12 @@ export function setupLocalChat() {
       }
     }
   });
+
+  world.afterEvents.entityDie.subscribe((ev) => {
+        const dead = ev.deadEntity;
+        if (dead.typeId !== "minecraft:player") return;
+        dead.addTag("dead");
+        dead.runCommand("gamemode spectator");
+        dead.nameTag = player.name;
+    });
 }

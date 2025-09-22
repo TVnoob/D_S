@@ -1,4 +1,5 @@
 import { world,system } from "@minecraft/server";
+import { startGameTimer } from "./timeboard";
 
 export const CARD_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -102,7 +103,7 @@ export function resetCards() {
     }
     if (msg === "!pstart") {
         ev.cancel = true;
-        distributeCards()
+        distributeCards();
     }
 })
 }
@@ -111,7 +112,8 @@ export function scripttingsystems(){
         const { id, message, sourceEntity } = event;
         const player = event.player;
         if (id === "nico:cards") {
-        distributeCards()
+        startGameTimer();
+        distributeCards();
         }
         if (id === "nico:cardClear") {
         system.run(() => {
