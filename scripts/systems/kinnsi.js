@@ -109,6 +109,7 @@ system.afterEvents.scriptEventReceive.subscribe(ev => {
   }
 });
 }
+
 export function setupLocalChat() {
   if (!StartGame) return;
   world.beforeEvents.chatSend.subscribe(ev => {
