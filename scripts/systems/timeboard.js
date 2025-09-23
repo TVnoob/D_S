@@ -47,7 +47,8 @@ function gameEnd(){ // ここに終了処理を追加
         clearCardTags(player);
     }
     system.run(() => {
-    world.runCommand("scriptevent nico:end")
+    world.runCommand("scriptevent nico:end");
+    world.runCommand("scriptevent nico:cardClear");
     world.runCommand('tp @a <ロビー座標>');
 });
 }
