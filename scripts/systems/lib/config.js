@@ -1,7 +1,7 @@
 // config.js
 import { world, system } from "@minecraft/server";
 import { ModalFormData, ActionFormData } from "@minecraft/server-ui";
-import { startgameinthedeathswapsurvivalminigame } from "./gamescripts/gamedamon";
+import { startgameinthedeathswapsurvivalminigame } from "./gamedamon";
 
 export const CONFIG_KEY = "deathswap:config"; // 永続化キー
 let waitthisisholyfucksystem = false;

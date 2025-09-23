@@ -1,7 +1,7 @@
 //JoinE.js
 import { world, ItemStack } from "@minecraft/server";
-import { startedGame, joinedPlayers, Endgame } from "./gamescripts/gamedamon.js";
-import { mainPlayers } from "./gamescripts/notjoins.js";
+import { startedGame, joinedPlayers, Endgame } from "./gamedamon.js";
+import { mainPlayers } from "./notjoins.js";
 import { isHost, getHostId } from "./getowuner.js";
 
 // === プレイヤー初参加処理 ===

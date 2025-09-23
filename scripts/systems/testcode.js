@@ -9,7 +9,7 @@ function stunGrenade(location) {
         tags: ["参加者"]
     });
     for (const pl of system01players) {
-        dimension.runCommand("say sucsess!"); // (pl, 'stunTime', 100) の部分はスコアボードのコマンドで、stunTimeという名前をスコアボードに追加する感じなのかな?
+        dimension.runCommand("scoreboard players set stunTime <ボード名> 100"); // (pl, 'stunTime', 100) の部分はスコアボードのコマンドで、stunTimeという名前をスコアボードに追加する感じなのかな?
         // 一応サンプルで dimension.runCommand("scoreboard players set stunTime <ボード名> 100");
         pl.runCommand('effect @s slowness 5 255 ');
     }

@@ -1,7 +1,7 @@
-import { world, system } from "@minecraft/server";
+import { world, system, GameRule } from "@minecraft/server";
 
 // PvP & アイテム使用禁止時間（秒）
-const NO_PVP_TIME = 180; // 3分
+const NO_PVP_TIME = 20; // 3分
 
 let StartGame = false;
 
@@ -22,6 +22,10 @@ let timerId = null; // runIntervalIDクリア
 
 // 経過時間カウント開始
 function startcount() {
+  system.run(() => {
+  const dim = world.getDimension("overworld");
+  dim.runCommand("gamerule pvp false");
+  });
   // すでに動作中なら止める
   if (timerId !== null) {
     system.clearRun(timerId);
@@ -35,8 +39,10 @@ function startcount() {
 
     if (elapsedSeconds >= NO_PVP_TIME) {
       // タイマー終了
+      const dim = world.getDimension("overworld");
       system.clearRun(timerId);
       timerId = null;
+      dim.runCommand("gamerule pvp true");
       world.sendMessage("§a[通知] 3分経過しました。PvPとアイテム使用が解禁されます");
     }
   }, 20);
@@ -44,14 +50,12 @@ function startcount() {
 
 export function kinnsisystems(){
 // PvP禁止処理
-world.beforeEvents.entityHurt.subscribe(ev => {
+world.afterEvents.entityHurt.subscribe(ev => {
   const { damageSource, hurtEntity } = ev;
-
   if (damageSource.damagingEntity?.typeId === "minecraft:player" &&
       hurtEntity.typeId === "minecraft:player") {
 
     if (DebugForbiddance || elapsedSeconds < NO_PVP_TIME) {
-      ev.cancel = true;
       damageSource.damagingEntity.sendMessage("§c[通知]PVPは現在無効です");
     }
   }
@@ -71,9 +75,16 @@ world.beforeEvents.itemUse.subscribe(ev => {
 });
 
 system.afterEvents.scriptEventReceive.subscribe(ev => {
+  const dim = world.getDimension("overworld");
   if (ev.id === "nico:kinnsiD") {
     DebugForbiddance = !DebugForbiddance;
     world.sendMessage(`§d[Debug] 禁止モードを ${DebugForbiddance ? "ON" : "OFF"} にしました`);
+    console.warn(`${DebugForbiddance}`);
+    if (DebugForbiddance){
+      dim.runCommand("gamerule pvp true");
+    } else {
+      dim.runCommand("gamerule pvp false");
+    }
   }
 
   if (ev.id === "nico:kinnsi") {
@@ -118,12 +129,4 @@ export function setupLocalChat() {
       }
     }
   });
-
-  world.afterEvents.entityDie.subscribe((ev) => {
-        const dead = ev.deadEntity;
-        if (dead.typeId !== "minecraft:player") return;
-        dead.addTag("dead");
-        dead.runCommand("gamemode spectator");
-        dead.nameTag = player.name;
-    });
 }

@@ -1,6 +1,6 @@
 import { system } from "@minecraft/server";
 import { joinedPlayers } from "./gamedamon.js";
-import { config } from "../config.js";
+import { config } from "./config.js";
 
 // === 乱数ユーティリティ ===
 function randomCoord(range) {

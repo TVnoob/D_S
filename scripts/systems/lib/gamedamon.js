@@ -1,10 +1,10 @@
 // gamedamon.js
 import { world, system } from "@minecraft/server";
-import { mainPlayers, setupSpectatorList } from "./notjoins";
+import { mainPlayers, setupSpectatorList } from "./notjoins.js";
 import { redistributeItems, giveOwnerConfigUI, distributeJoinSpectatorItems } from "../JoinE.js";
-import { isHost, getHostId } from "../getowuner.js";
+import { isHost, getHostId } from "./getowuner.js";
 import { setupBoard, stopBoard } from "./board.js";
-import { CONFIG_KEY } from "../config.js";
+import { CONFIG_KEY } from "./config.js";
 import { doFirstTP } from "./firsttp.js";
 
 // === グローバル管理用変数 ===

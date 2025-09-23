@@ -1,6 +1,6 @@
 import { world, system } from "@minecraft/server";
 import { joinedPlayers } from "./gamedamon.js";
-import { config } from "../config.js";
+import { config } from "./config.js";
 import { swapPlayers } from "./tpcode.js";
 
 // === グローバル管理 ===

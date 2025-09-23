@@ -3,6 +3,7 @@ import { CARD_LETTERS, SEARCH_ITEMS } from "./cardSystem";
 
 // キーアイテム（1種類1個のみ）
 const KEY_ITEMS = SEARCH_ITEMS; // 今後追加可能
+const playerHasKeyItemPrev = new Map();
 
 // === Utility ===
 function getCard(entity) {
@@ -65,25 +66,17 @@ function isKillAllowed(attacker, victim) {
 // === Hooks ===
 export function setupDeathRules() {
   // PvPダメージ制御
-  world.beforeEvents.entityHurt.subscribe(ev => {
-    const attacker = ev.damageSource.damagingEntity;
+  world.afterEvents.entityHurt.subscribe(ev => {
+    const attacker = ev.damageSource?.damagingEntity;
     const victim = ev.hurtEntity;
 
     if (!attacker || !victim) return;
-    if (attacker.typeId !== "minecraft:player") return;
-    if (victim.typeId !== "minecraft:player") return;
+    if (attacker.typeId !== "minecraft:player" || victim.typeId !== "minecraft:player") return;
 
-    // 標的へのダメージ +1
+      // 標的へのダメージ +1
     const victimCard = getCard(victim);
     if (victimCard && attacker.hasTag(`Target_${victimCard}`)) {
       ev.damage += 1;
-    }
-
-    // 誤殺ペナルティ
-    if (!isKillAllowed(attacker, victim)) {
-      ev.cancel = true;
-      attacker.kill();
-      attacker.sendMessage("§c[誤殺ペナルティ]あなたは死亡しました!");
     }
   });
 
@@ -92,29 +85,74 @@ export function setupDeathRules() {
     const victim = ev.deadEntity;
     const attacker = ev.damageSource?.damagingEntity;
 
-    if (!attacker || attacker.typeId !== "minecraft:player") return;
     if (victim.typeId !== "minecraft:player") return;
+    if (!attacker || attacker.typeId !== "minecraft:player") return;
 
-    // ここで再度チェック（誤殺の場合 attacker.kill() で既に死んでいるはずだけど保険）
-    if (!isKillAllowed(attacker, victim)) return;
+    if (!isKillAllowed(attacker, victim)) {
+      // --- 被害者救済 ---
+      try {
+        const health = victim.getComponent("health");
+        health.current = health.value; // HP全回復
+        victim.addEffect("resistance", 40, { amplifier: 255, showParticles: false }); // 2秒耐性
+        victim.teleport(victim.location, victim.dimension); // その場に再配置（死亡演出対策）
+        victim.sendMessage("§a[誤殺救済] あなたは誤殺されていたため復活しました!");
+
+        // --- 加害者処刑 ---
+        attacker.kill();
+        attacker.sendMessage("§c[誤殺ペナルティ]あなたは重大な過ちを犯しました");
+      } catch (e) {
+        console.warn("[誤殺処理エラー]", e);
+      }
+      return;
+    }
+
+    victim.nameTag = victim.name;
+    victim.addTag("dead");
+    victim.runCommand("gamemode spectator");
 
     // 正当キル → メッセージとタグ付与
-    attacker.sendMessage("§a殺害に成功しました！");
+    attacker.sendMessage("§a殺害に成功しました!");
 
     if (!attacker.hasTag("successKilled")) {
       attacker.addTag("successKilled");
       attacker.sendMessage("§b[Info] あなたに残り時間が表示されるようになりました");
     }
   });
+}
+export function setupKeyItemTracker() {
+  // 定期実行
+  system.runInterval(() => {
+    for (const player of world.getPlayers()) {
+      const invComp = player.getComponent("minecraft:inventory");
+      if (!invComp) continue;
+      const container = invComp.container;
+      if (!container) continue;
 
-  // === キーアイテムの最終所持者更新 ===
-  world.afterEvents.itemPickup.subscribe(ev => {
-    const { itemStack, player } = ev;
-    if (!itemStack) return;
+      // 今のキーアイテム所持セット
+      const nowSet = new Set();
 
-    const itemId = itemStack.typeId.split(":").pop(); // "minecraft:diamond" → "diamond"
-    if (KEY_ITEMS.includes(itemId)) {
-      updateLastOwner(player, itemId);
+      for (let slot = 0; slot < container.size; slot++) {
+        const item = container.getItem(slot);
+        if (!item) continue;
+        // typeId は "namespace:name" 形式なので最後の部分や全体で KEY_ITEMS と比較
+        const itemId = item.typeId.split(":").pop();
+        if (KEY_ITEMS.includes(itemId)) {
+          nowSet.add(itemId);
+        }
+      }
+
+      const prevSet = playerHasKeyItemPrev.get(player.id) || new Set();
+
+      // 新しく取得されたキーアイテムがあれば
+      for (const keyItem of nowSet) {
+        if (!prevSet.has(keyItem)) {
+          // このプレイヤーが keyItem を取得したとみなす
+          updateLastOwner(player, keyItem);
+        }
+      }
+
+      // 更新
+      playerHasKeyItemPrev.set(player.id, nowSet);
     }
-  });
+  }, 20); // 20 tick = 約1秒
 }

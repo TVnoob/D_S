@@ -1,36 +1,18 @@
 // main.js
 // import { test } from "./systems/test";
-//import { playereventinworld } from "./systems/JoinE";
-//import { originalitemscriptfucktion } from "./systems/itemsScript";
-//import { loadmainsystem } from "./systems/gamescripts/tpcode";
-//import { ingorestopgame } from "./systems/gamescripts/gamedamon";
-//import { loadmainsystematfirsttp } from "./systems/gamescripts/firsttp";
-//import { configuisetupfunction, loadConfig } from "./systems/config";
-//import { sendchatchecker } from "./systems/gamescripts/notjoins";
-//import { sucsesstoloadboard } from "./systems/gamescripts/board";
-//import { registerHostOnJoin } from "./systems/getowuner";
-import { Detecthit00154 } from "./testcode"; // test
-import { testloadingfunction } from "./systems/shopUI"; // test
+import { Detecthit00154 } from "./systems/testcode";
+import { testloadingfunction } from "./systems/shopUI"; 
 import { resetCards,scripttingsystems } from "./systems/cardSystem";
 import { kinnsisystems,setupLocalChat } from "./systems/kinnsi";
-import { setupDeathRules } from "./systems/death";
+import { setupDeathRules,setupKeyItemTracker } from "./systems/death";
 import { yomikomudake001 } from "./systems/timeboard";
 // test();
-//ingorestopgame();
-//loadmainsystem();
-//playereventinworld();
-//originalitemscriptfucktion();
-//loadmainsystematfirsttp();
-//configuisetupfunction();
-//loadConfig();
-//sendchatchecker();
-//sucsesstoloadboard();
-//registerHostOnJoin();
-Detecthit00154(); // test
-testloadingfunction(); // test
+Detecthit00154(); 
+testloadingfunction(); 
 resetCards();
 scripttingsystems()
 kinnsisystems();
 setupLocalChat();
 setupDeathRules();
+setupKeyItemTracker();
 yomikomudake001();
