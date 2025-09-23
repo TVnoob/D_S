@@ -4,6 +4,7 @@ import { CARD_LETTERS, SEARCH_ITEMS } from "./cardSystem";
 // キーアイテム（1種類1個のみ）
 const KEY_ITEMS = SEARCH_ITEMS; // 今後追加可能
 const playerHasKeyItemPrev = new Map();
+const lastPlayerLocation = new Map()
 
 // === Utility ===
 function getCard(entity) {
@@ -65,6 +66,17 @@ function isKillAllowed(attacker, victim) {
   return false;
 }
 
+export function trackPlayerLocations() {
+  system.runInterval(() => {
+    for (const player of world.getPlayers()) {
+      lastPlayerLocation.set(player.id, {
+        pos: { ...player.location }, // x, y, z
+        dim: player.dimension
+      });
+    }
+  }, 5); // 1秒ごとに記録
+}
+
 // === Hooks ===
 export function setupDeathRules() {
   // PvPダメージ制御
@@ -81,6 +93,7 @@ export function setupDeathRules() {
   world.afterEvents.entityDie.subscribe(ev => {
     const victim = ev.deadEntity;
     const attacker = ev.damageSource?.damagingEntity;
+    const saved = lastPlayerLocation.get(victim.id);
 
     if (victim.typeId !== "minecraft:player") return;
     if (!attacker || attacker.typeId !== "minecraft:player") return;
@@ -91,7 +104,8 @@ export function setupDeathRules() {
         const health = victim.getComponent("health");
         health.current = health.value; // HP全回復
         victim.addEffect("resistance", 40, { amplifier: 255, showParticles: false }); // 2秒耐性
-        victim.teleport(victim.location, victim.dimension); // その場に再配置（死亡演出対策）
+        victim.teleport(saved.pos); // その場に再配置（死亡演出対策）
+        console.warn(`${saved.pos},z${saved.dim}`)
         victim.sendMessage("§a[誤殺救済] あなたは誤殺されていたため復活しました!");
 
         // --- 加害者処刑 ---

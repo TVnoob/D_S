@@ -153,8 +153,16 @@ export function clearCardTags(entity) {
     for (const item of SEARCH_ITEMS) {
     entity.removeTag(`Item_${item}`);
   }
-  system.run(() => {
-    world.removeTag("dead");
-    world.removeTag("successKilled");
-  })
+  for (const player of world.getPlayers()){
+    try{
+    player.removeTag("dead");
+    } catch {
+
+    }
+    try{
+    player.removeTag("successKilled");
+    } catch(e){
+        console.warn(e)
+    }
+}
 }
