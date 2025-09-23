@@ -70,11 +70,11 @@ export function trackPlayerLocations() {
   system.runInterval(() => {
     for (const player of world.getPlayers()) {
       lastPlayerLocation.set(player.id, {
-        pos: { ...player.location }, // x, y, z
+        pos: { x: player.location.x, y: player.location.y, z: player.location.z },
         dim: player.dimension
       });
     }
-  }, 5); // 1秒ごとに記録
+  }, 20); // 1秒ごとに記録
 }
 
 // === Hooks ===
@@ -104,9 +104,13 @@ export function setupDeathRules() {
         const health = victim.getComponent("health");
         health.current = health.value; // HP全回復
         victim.addEffect("resistance", 40, { amplifier: 255, showParticles: false }); // 2秒耐性
-        victim.teleport(saved.pos); // その場に再配置（死亡演出対策）
-        console.warn(`${saved.pos},z${saved.dim}`)
+        if (saved) {
+          console.warn(`location: x=${saved.pos.x}, y=${saved.pos.y}, z=${saved.pos.z}, dim=${saved.dim.id}`);
+        }
         victim.sendMessage("§a[誤殺救済] あなたは誤殺されていたため復活しました!");
+        system.runTimeout(() => {
+        victim.runCommand(`tp @s ${saved.pos.x} ${saved.pos.y} ${saved.pos.z }`);
+        },10);
 
         // --- 加害者処刑 ---
         attacker.kill();

@@ -1,5 +1,5 @@
 import { world, system, GameRule } from "@minecraft/server";
-
+import { trackPlayerLocations } from "./death";
 // PvP & アイテム使用禁止時間（秒）
 const NO_PVP_TIME = 20; // 3分
 
@@ -106,6 +106,9 @@ system.afterEvents.scriptEventReceive.subscribe(ev => {
     player.nameTag = player.name; // 元の名前を戻す
     player.sendMessage("§a[Debug] ネームプレートが表示に戻りました！"); // Debug
   }
+  }
+  if(ev.id === "nico:tetst"){
+    trackPlayerLocations();
   }
 });
 }
