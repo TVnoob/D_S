@@ -161,7 +161,7 @@ function testOpenUI(player) {
             }
             if (res.selection === 4) {
                 if (!byusystem001(player, 1)) return;
-                player.runCommand("give @s tripwire_hook");
+                player.runCommand("give @s nico:key");
             }
             if (res.selection === 5) {
                 if (!byusystem001(player, 2)) return;

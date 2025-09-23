@@ -8,11 +8,13 @@ const playerHasKeyItemPrev = new Map();
 // === Utility ===
 function getCard(entity) {
   const tag = entity.getTags().find(t => t.startsWith("Card_"));
+  console.warn(`Card_${tag}`);
   return tag ? tag.replace("Card_", "") : null;
 }
 
 function getTarget(entity) {
   const tag = entity.getTags().find(t => t.startsWith("Target_"));
+  console.warn(`Target_${tag}`);
   return tag ? tag.replace("Target_", "") : null;
 }
 
@@ -73,11 +75,6 @@ export function setupDeathRules() {
     if (!attacker || !victim) return;
     if (attacker.typeId !== "minecraft:player" || victim.typeId !== "minecraft:player") return;
 
-      // 標的へのダメージ +1
-    const victimCard = getCard(victim);
-    if (victimCard && attacker.hasTag(`Target_${victimCard}`)) {
-      ev.damage += 1;
-    }
   });
 
   // === 正しいキル成立時の処理 ===

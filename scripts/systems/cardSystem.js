@@ -5,7 +5,17 @@ export const CARD_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 // 捜索アイテムのリスト
 export const SEARCH_ITEMS = [
-  "hane",      // 羽
+  "slime_ball",
+  "nether_star",
+  "quartz",
+  "sugar",
+  "bone",
+  "flint",
+  "sugar_cane",
+  "echo_shard",
+  "magma_cream",
+  "heart_of_the_sea",
+  "amethyst_shard"
   // ここにどんどん追加していける
 ];
 
@@ -141,6 +151,10 @@ export function clearCardTags(entity) {
         entity.removeTag(`Target_${card}`);
     }
     for (const item of SEARCH_ITEMS) {
-    entity.removeTag(`${item}`);
+    entity.removeTag(`Item_${item}`);
   }
+  system.run(() => {
+    world.removeTag("dead");
+    world.removeTag("successKilled");
+  })
 }

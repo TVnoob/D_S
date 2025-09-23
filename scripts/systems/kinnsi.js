@@ -9,8 +9,8 @@ let StartGame = false;
 let DebugForbiddance = false;
 
 // 禁止アイテムリスト
-const BANNED_ITEMS = [ // 仮
-  "minecraft:name_tag",
+const BANNED_ITEMS = [
+  "nico:name",
   "nico:book",     // 攻略本
   "nico:suisyou"   // 水晶玉
 ];
