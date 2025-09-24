@@ -152,6 +152,9 @@ export function clearCardTags(entity) {
     }
     for (const item of SEARCH_ITEMS) {
     entity.removeTag(`Item_${item}`);
+    try{
+    entity.removeTag(`LastOwner_${item}`);
+    } catch{}
   }
   for (const player of world.getPlayers()){
     try{
