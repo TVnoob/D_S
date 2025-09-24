@@ -42,13 +42,14 @@ function checkPlayerCount() {
 export function yomikomudake001(){
     console.warn("timeboard.js was loading.")
 }
-function gameEnd(){ // ここに終了処理を追加
+export function gameEnd(){ // ここに終了処理を追加
     for (const player of world.getPlayers()) {
         clearCardTags(player);
     }
     system.run(() => {
-    world.runCommand("scriptevent nico:end");
-    world.runCommand("scriptevent nico:cardClear");
-    world.runCommand('tp @a <ロビー座標>');
+    const dim = world.getDimension("overworld");
+    dim.runCommand("scriptevent nico:end");
+    dim.runCommand("scriptevent nico:cardClear");
+    dim.runCommand('tp @a 0 0 0');
 });
 }
