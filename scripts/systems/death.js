@@ -66,7 +66,6 @@ function updateLastOwner(player, itemName) {
     player.runCommand(
       `replaceitem entity @s ${slotStr} ${itemName} 1 0 {"item_lock":{"mode":"lock_in_inventory"}}`
     );
-    console.warn(`replaceitem entity @s ${slotStr} ${itemName} 1 0 {"item_lock":{"mode":"lock_in_inventory"}}`)
   }
 }
 
