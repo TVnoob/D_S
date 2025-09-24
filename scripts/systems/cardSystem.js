@@ -15,7 +15,16 @@ export const SEARCH_ITEMS = [
   "echo_shard",
   "magma_cream",
   "heart_of_the_sea",
-  "amethyst_shard"
+  "amethyst_shard",
+  "gunpowder",
+  "gold_nugget",
+  "emerald",
+  "lapis_lazuli",
+  "leather",
+  "netherbrick",
+  "hane",
+  "glowstone_dust"
+
   // ここにどんどん追加していける
 ];
 

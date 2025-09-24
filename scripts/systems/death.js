@@ -25,7 +25,6 @@ function getSearchItems(entity) {
     .map(t => t.replace("Item_", ""));
 }
 
-// === キーアイテム最終所持者を更新 ===
 function updateLastOwner(player, itemName) {
   // まず全員から外す
   for (const p of world.getPlayers()) {
@@ -34,6 +33,41 @@ function updateLastOwner(player, itemName) {
   // この人を最終所持者にする
   player.addTag(`LastOwner_${itemName}`);
   player.sendMessage(`§6[通知] あなたは ${itemName} の最終所持者になりました!`);
+
+  // --- 追加: replaceitem でロック付きに差し替える ---
+  const inv = player.getComponent("minecraft:inventory")?.container;
+  if (!inv) return;
+
+  for (let slot = 0; slot < inv.size; slot++) {
+    const item = inv.getItem(slot);
+    if (!item) continue;
+    const id = item.typeId.split(":").pop();
+    if (id !== itemName) continue;
+
+    // スロットタイプと番号を判定
+    let slotStr = null;
+    if (slot >= 0 && slot <= 8) {
+      slotStr = `slot.hotbar ${slot}`;
+    } else if (slot >= 9 && slot <= 35) {
+      slotStr = `slot.inventory ${slot - 9}`;
+    } else if (slot === 36) {
+      slotStr = "slot.armor feet";
+    } else if (slot === 37) {
+      slotStr = "slot.armor legs";
+    } else if (slot === 38) {
+      slotStr = "slot.armor chest";
+    } else if (slot === 39) {
+      slotStr = "slot.armor head";
+    }
+
+    if (!slotStr) continue;
+
+    // 置換コマンドを実行
+    player.runCommand(
+      `replaceitem entity @s ${slotStr} ${itemName} 1 0 {"item_lock":{"mode":"lock_in_inventory"}}`
+    );
+    console.warn(`replaceitem entity @s ${slotStr} ${itemName} 1 0 {"item_lock":{"mode":"lock_in_inventory"}}`)
+  }
 }
 
 // === キル可否判定 ===
