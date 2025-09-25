@@ -27,11 +27,12 @@ function getSearchItems(entity) {
 function getTagSearchItem(player,itemName){
   const needitem = player.getTags().filter(t => t.startsWith("Item_")).map(t => t.replace("Item_", ""));
   console.warn(`Item:${needitem},but:${itemName}`);
-  return needitem === itemName;
+  console.warn("tested",String(needitem) === String(itemName));
+  return String(needitem) === String(itemName);
 }
 function updateLastOwner(player, itemName) {
-  if (getTagSearchItem(player, itemName)){
-    console.warn(!getTagSearchItem(player, itemName));
+  if (!getTagSearchItem(player, itemName)){
+    console.warn("!つき",!getTagSearchItem(player, itemName));
     console.warn("[Debug] falseを検知");
     // player.addTag(`Misspick_${itemName}`); // ←　無効化
     const health = player.getComponent("minecraft:health");
