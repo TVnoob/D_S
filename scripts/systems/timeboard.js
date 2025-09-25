@@ -16,7 +16,6 @@ export function startGameTimer() {
         const remaining = GAME_LIMIT_TIME - gameElapsedSeconds;
         if (remaining <= 0) {
             world.sendMessage("§c[Game] Time Up!");
-            system.clearRun(gameTimer);
             gameEnd(); // ゲーム終了処理呼び出し
             return;
         }
@@ -43,6 +42,8 @@ export function yomikomudake001(){
     console.warn("timeboard.js was loading.")
 }
 export function gameEnd(){ // ここに終了処理を追加
+    system.clearRun(gameTimer);
+    gameElapsedSeconds = 1000;
     for (const player of world.getPlayers()) {
         clearCardTags(player);
     }

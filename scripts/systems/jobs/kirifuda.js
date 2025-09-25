@@ -1,6 +1,6 @@
 // trumpSystem.js
 import { world, system } from "@minecraft/server";
-import { ModalFormData } from "@minecraft/server-ui";
+import { ModalFormData,ActionFormData } from "@minecraft/server-ui";
 import { evaluateHand } from "./kirifuda_subclass/hannteiC";
 
 // デッキ定義（52枚）
@@ -25,47 +25,35 @@ function showTrumpUI(player) {
   const handData = playerHands.get(player.id);
   const form = new ModalFormData()
   .title("ポーカーテーブル")
-  .body("トランプを引きましょう");
 
-  for (let i = 0; i < 5; i++) {
-    form.dropdown(
-      `カード${i + 1}`,
-      handData.cards[i] ? [handData.cards[i]] : ["めくる (消費:トランプ1枚)"],
-      0
-    );
+  const options = handData.cards.map((card, i) => card ?? `カード${i + 1}: めくる (消費:トランプ1枚)`);
+
+  form.dropdown("カードを選んでめくる", options, { defaultValueIndex: 0 });
+
+  if (handData.cards.some(c => c === null)){
+  form.submitButton("test");
+  } else {
+  form.submitButton("引く!");
   }
-
-  form.show(player).then(res => {
-    if (res.canceled) {
-      // UIが閉じられた時
-      const handData = playerHands.get(player.id);
-      if (handData.cards.every(c => c !== null) && handData.result) {
-        player.sendMessage(`§aあなたの役「${handData.result}」が確定しました！`);
-        applyEffect(player, handData.result);
-      }
-      return;
-    }
-
     // どのカードをめくったか判定
-    const idx = res.selection.findIndex(v => v === 0); // 選択肢が "めくる" だったスロット
-    if (idx !== -1 && !handData.cards[idx]) {
-      if (!consumeTrump(player)) {
-        player.sendMessage("§cトランプが足りません！");
+  form.show(player).then(res => {
+    if (res.canceled || res.selection === undefined) return;
+
+    const idx = res.selection; // ドロップダウンで選ばれたカード番号
+    if (handData.cards[idx] === null) {
+      // ここでトランプを消費して新しいカードを引く処理
+      const newCard = drawRandomCard();
+      handData.cards[idx] = newCard;
+      player.sendMessage(`カード${idx + 1} をめくった: ${newCard}`);
+
+      // まだ未確定カードが残っていれば UI を再度開く
+      if (handData.cards.some(c => c === null)) {
+        showTrumpUI(player);
       } else {
-        handData.cards[idx] = drawCard();
-        player.sendMessage(`§bカード${idx + 1} → ${handData.cards[idx]}`);
+        player.sendMessage("5枚揃いました!役を判定します…");
+        const hand = evaluateHand(handData.cards);
+        applyPokerEffect(player, hand); // 役に応じた効果を付与
       }
-    }
-
-    // 5枚揃ったら役判定
-    if (handData.cards.every(c => c !== null)) {
-      handData.result = evaluateHand(handData.cards);
-      player.sendMessage(`§e役判定 → ${handData.result}`);
-    }
-
-    // UIを再度開く（カードが全て揃うまで）
-    if (handData.cards.some(c => c === null)) {
-      showTrumpUI(player);
     }
   });
 }

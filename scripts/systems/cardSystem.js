@@ -163,6 +163,7 @@ export function clearCardTags(entity) {
     entity.removeTag(`Item_${item}`);
     try{
     entity.removeTag(`LastOwner_${item}`);
+    entity.removeTag(`Misspick_${item}`);
     } catch{}
   }
   for (const player of world.getPlayers()){

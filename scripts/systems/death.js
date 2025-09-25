@@ -24,8 +24,38 @@ function getSearchItems(entity) {
     .filter(t => t.startsWith("Item_"))
     .map(t => t.replace("Item_", ""));
 }
-
+function getTagSearchItem(player,itemName){
+  const needitem = player.getTags().find(t => t.startsWith("Item_"));
+  console.warn(`Item_${needitem},but${itemName}`);
+  return needitem === itemName;
+}
+function getPlayersWithTag(tagName) {
+  return world.getPlayers().filter(p => p.hasTag(tagName));
+}
+function itijifunction(befreePlayers,itemName){
+  if (befreePlayers !== null){
+  befreePlayers.removeTag(`Misspick_${itemName}`);
+  const health = player.getComponent("minecraft:health");
+  const currentMax = health.max;       // 現在の最大HP
+  const newMax = Math.max(1, Math.floor(currentMax * 2)); // 1未満にはしない
+  health.max = newMax;
+  player.sendMessage(`§c[通知] ペナルティが解除されました (最大HP:${currentMax} → ${newMax})`);
+  }
+}
 function updateLastOwner(player, itemName) {
+  if (!getTagSearchItem(player, itemName)){
+    console.warn("[Debug] falseを検知");
+    player.addTag(`Misspick_${itemName}`);
+    const HP = player.getComponent("minecraft:health");
+    console.warn(`HP:${HP}`);
+    const currentMax = HP;       // 現在の最大HP
+    const newMax = Math.max(1, Math.floor(currentMax / 2)); // 1未満にはしない
+    HP.current = newMax; // 最大HP不正確
+    player.sendMessage(`§c[キーアイテムペナルティ] 最大HPが半減しました (${currentMax} → ${newMax})`);
+    return;
+  }
+  const befreePlayers = getPlayersWithTag(`Misspick_${itemName}`);
+  itijifunction(befreePlayers,itemName);
   // まず全員から外す
   for (const p of world.getPlayers()) {
     p.removeTag(`LastOwner_${itemName}`);

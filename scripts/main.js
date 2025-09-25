@@ -8,6 +8,7 @@ import { setupDeathRules,setupKeyItemTracker,trackPlayerLocations } from "./syst
 import { yomikomudake001 } from "./systems/timeboard";
 import { yomikomi_hannteiC } from "./systems/jobs/kirifuda_subclass/hannteiC";
 import { yomikomi_kirifuda } from "./systems/jobs/kirifuda";
+import { originalitemscript } from "./systems/jobs/itemsScript";
 // test();
 Detecthit00154(); 
 testloadingfunction(); 
@@ -19,5 +20,6 @@ setupDeathRules();
 setupKeyItemTracker();
 yomikomudake001();
 trackPlayerLocations();
+originalitemscript();
 yomikomi_hannteiC();
 yomikomi_kirifuda();
