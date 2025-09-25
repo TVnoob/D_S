@@ -7,6 +7,8 @@
 // rank: 2〜14 (A=14), suit: "hearts" | "spades" | "diamonds" | "clubs"
 
 function isFlush(cards) {
+  console.warn(JSON.stringify(cards));
+  console.warn("test",cards.every(c => c.suit === cards[0].suit));
   return cards.every(c => c.suit === cards[0].suit);
 }
 
