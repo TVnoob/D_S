@@ -1,0 +1,166 @@
+// trumpSystem.js
+import { world, system } from "@minecraft/server";
+import { ModalFormData } from "@minecraft/server-ui";
+import { evaluateHand } from "./kirifuda_subclass/hannteiC";
+
+// デッキ定義（52枚）
+const SUITS = ["♠", "♥", "♦", "♣"];
+const RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+const DECK = [];
+for (const s of SUITS) for (const r of RANKS) DECK.push(`${s}${r}`);
+
+// プレイヤーごとの手札を管理
+const playerHands = new Map(); // { playerId: { cards: [null,null,null,null,null], result: null } }
+
+// === 切り札UIを開く ===
+export function openTrumpUI(player) {
+  if (!playerHands.has(player.id)) {
+    playerHands.set(player.id, { cards: [null, null, null, null, null], result: null });
+  }
+  showTrumpUI(player);
+}
+
+// === UIの描画 ===
+function showTrumpUI(player) {
+  const handData = playerHands.get(player.id);
+  const form = new ModalFormData().title("切り札：ポーカーハンド");
+
+  for (let i = 0; i < 5; i++) {
+    form.dropdown(
+      `カード${i + 1}`,
+      handData.cards[i] ? [handData.cards[i]] : ["めくる (消費:トランプ1枚)"],
+      0
+    );
+  }
+
+  form.show(player).then(res => {
+    if (res.canceled) {
+      // UIが閉じられた時
+      const handData = playerHands.get(player.id);
+      if (handData.cards.every(c => c !== null) && handData.result) {
+        player.sendMessage(`§aあなたの役「${handData.result}」が確定しました！`);
+        applyEffect(player, handData.result);
+      }
+      return;
+    }
+
+    // どのカードをめくったか判定
+    const idx = res.selection.findIndex(v => v === 0); // 選択肢が "めくる" だったスロット
+    if (idx !== -1 && !handData.cards[idx]) {
+      if (!consumeTrump(player)) {
+        player.sendMessage("§cトランプが足りません！");
+      } else {
+        handData.cards[idx] = drawCard();
+        player.sendMessage(`§bカード${idx + 1} → ${handData.cards[idx]}`);
+      }
+    }
+
+    // 5枚揃ったら役判定
+    if (handData.cards.every(c => c !== null)) {
+      handData.result = evaluateHand(handData.cards);
+      player.sendMessage(`§e役判定 → ${handData.result}`);
+    }
+
+    // UIを再度開く（カードが全て揃うまで）
+    if (handData.cards.some(c => c === null)) {
+      showTrumpUI(player);
+    }
+  });
+}
+
+// === カード1枚引く ===
+function drawCard() {
+  const shuffled = DECK.slice().sort(() => Math.random() - 0.5);
+  return shuffled[0];
+}
+
+// === トランプを消費 ===
+function consumeTrump(player) {
+  const inv = player.getComponent("inventory").container;
+  for (let i = 0; i < inv.size; i++) {
+    const item = inv.getItem(i);
+    if (item && item.typeId === "nico:toranpu") {
+      if (item.amount > 1) {
+        item.amount -= 1;
+        inv.setItem(i, item);
+      } else {
+        inv.setItem(i, null);
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
+// === 効果付与 ===
+function applyEffect(player, role) {
+  switch (role) {
+    case "ワンペア":
+    case "ツーペア":
+    case "スリーカード":
+      addKiruFuda(player, 3);
+      giveHouseki(player, 3);
+      player.sendMessage("§a切札+3、宝石+3を得ました!");
+      break;
+
+    case "ストレート":
+      addEffect(player, "speed", 1, "infinite");
+      addEffect(player, "saturation", 1, "infinite"); // 毎秒満腹度回復
+      giveHouseki(player, 3);
+      player.sendMessage("§a移動速度+1、毎秒満腹度回復、宝石+3を得ました!");
+      break;
+
+    case "フラッシュ":
+      addEffect(player, "health_boost", 40, "infinite"); // 最大体力+40
+      addEffect(player, "regeneration", 1, "infinite"); // 毎秒体力回復
+      giveHouseki(player, 3);
+      player.sendMessage("§a最大体力+40、毎秒体力回復、宝石+3を得ました!");
+      break;
+
+    case "フルハウス":
+      addEffect(player, "resistance", 5, "infinite"); // 受けるダメージ半減
+      giveHouseki(player, 3);
+      player.sendMessage("§aダメージ半減、宝石+3を得ました!");
+      break;
+
+    case "フォーカード":
+      addKiruFuda(player, 4);
+      giveHouseki(player, 4);
+      player.sendMessage("§a切札+4、宝石+4を得ました!");
+      break;
+
+    case "ストレートフラッシュ":
+      addEffect(player, "speed", 2, "infinite");
+      addEffect(player, "health_boost", 40, "infinite");
+      giveHouseki(player, 10);
+      player.sendMessage("§a移動速度+2、最大体力+40、宝石+10を得ました!");
+      break;
+
+    case "ロイヤルストレートフラッシュ":
+      addKiruFuda(player, 99);
+      player.sendMessage("§6伝説の役を完成!切札+99を得ました!");
+      break;
+
+    default:
+      player.sendMessage(`§7役「${role}」に効果はありません。`);
+      break;
+  }
+}
+
+
+function addKiruFuda(player, amount) {
+  const score = world.scoreboard.getObjective("KIRUFUDA") ??
+    world.scoreboard.addObjective("KIRUFUDA", "KIRUFUDA");
+  const current = score.getScore(player) ?? 0;
+  score.setScore(player, current + amount);
+}
+
+function giveHouseki(player, amount) {
+  player.runCommand(`give @s nico:houseki ${amount}`);
+}
+
+// 効果付与（統合版なので effect コマンドで付与）
+function addEffect(player, effect, amplifier, duration) {
+  const dur = duration === "infinite" ? 999999 : duration;
+  player.runCommand(`effect @s ${effect} ${dur} ${amplifier} true`);
+}
