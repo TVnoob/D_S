@@ -62,6 +62,11 @@ function showTrumpUI(player) {
       handData.result = evaluateHand(handData.cards);
       player.sendMessage(`§e役判定 → ${handData.result}`);
     }
+
+    // UIを再度開く（カードが全て揃うまで）
+    if (handData.cards.some(c => c === null)) {
+      showTrumpUI(player);
+    }
   });
 }
 
