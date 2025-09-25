@@ -23,7 +23,9 @@ export function openTrumpUI(player) {
 // === UIの描画 ===
 function showTrumpUI(player) {
   const handData = playerHands.get(player.id);
-  const form = new ModalFormData().title("切り札：ポーカーハンド");
+  const form = new ModalFormData()
+  .title("ポーカーテーブル")
+  .body("トランプを引きましょう");
 
   for (let i = 0; i < 5; i++) {
     form.dropdown(
@@ -60,11 +62,6 @@ function showTrumpUI(player) {
       handData.result = evaluateHand(handData.cards);
       player.sendMessage(`§e役判定 → ${handData.result}`);
     }
-
-    // UIを再度開く（カードが全て揃うまで）
-    if (handData.cards.some(c => c === null)) {
-      showTrumpUI(player);
-    }
   });
 }
 
@@ -79,7 +76,7 @@ function consumeTrump(player) {
   const inv = player.getComponent("inventory").container;
   for (let i = 0; i < inv.size; i++) {
     const item = inv.getItem(i);
-    if (item && item.typeId === "nico:toranpu") {
+    if (item && item.typeId === "nico:toranpu") { // アイテムIDが変化する可能性
       if (item.amount > 1) {
         item.amount -= 1;
         inv.setItem(i, item);
@@ -163,4 +160,7 @@ function giveHouseki(player, amount) {
 function addEffect(player, effect, amplifier, duration) {
   const dur = duration === "infinite" ? 999999 : duration;
   player.runCommand(`effect @s ${effect} ${dur} ${amplifier} true`);
+}
+export function yomikomi_kirifuda(){
+    console.warn("kirifuda.js was loading.");
 }

@@ -1,4 +1,4 @@
-// pokerHands.js
+// hannteiC.js
 // 役判定ロジックをリスト化したファイル
 
 // === 基本判定ユーティリティ ===
@@ -88,4 +88,8 @@ export function evaluateHand(cards) {
     if (check(cards)) return name;
   }
   return "ノーハンド";
+}
+
+export function yomikomi_hannteiC(){
+  console.warn("hannteiC.js was loading.");
 }
