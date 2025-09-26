@@ -86,11 +86,20 @@ const HAND_CHECKERS = [
 
 // === 役を評価する関数 ===
 export function evaluateHand(cards) {
+  const parsed = cards.map(parseCard(cards));
   for (const { name, check } of HAND_CHECKERS) {
-    if (check(cards)) return name;
+    if (check(parsed)) return name;
   }
   return "ノーハンド";
 }
+
+function parseCard(cards) {
+  const suit = cards[0];            // 先頭の1文字 → "C" (クラブ)
+  const rank = parseInt(cards.slice(1), 10); // 残り → "14" → 数字14
+  return { suit, rank };              // { suit: "C", rank: 14 }
+}
+
+
 
 export function yomikomi_hannteiC(){
   console.warn("hannteiC.js was loading.");
