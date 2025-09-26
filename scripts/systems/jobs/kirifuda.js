@@ -1,6 +1,6 @@
 // trumpSystem.js
 import { world, system } from "@minecraft/server";
-import { ModalFormData,ActionFormData } from "@minecraft/server-ui";
+import { ModalFormData } from "@minecraft/server-ui";
 import { evaluateHand } from "./kirifuda_subclass/hannteiC";
 
 // デッキ定義（52枚）
