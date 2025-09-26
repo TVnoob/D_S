@@ -86,7 +86,7 @@ const HAND_CHECKERS = [
 
 // === 役を評価する関数 ===
 export function evaluateHand(cards) {
-  const parsed = cards.map(parseCard(cards));
+  const parsed = cards.map(parseCard);
   for (const { name, check } of HAND_CHECKERS) {
     if (check(parsed)) return name;
   }
