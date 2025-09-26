@@ -1,6 +1,6 @@
-import { yomikomi_hannteiC } from "./systems/jobs/kirifuda_subclass/hannteiC";
-import { yomikomi_kirifuda } from "./systems/jobs/kirifuda";
-import { originalitemscript } from "./systems/jobs/itemsScript";
+import { yomikomi_hannteiC } from "./jobs/kirifuda_subclass/hannteiC";
+import { yomikomi_kirifuda } from "./jobs/kirifuda";
+import { originalitemscript } from "./jobs/itemsScript";
 
 export function fromJM(){
 yomikomi_hannteiC();
