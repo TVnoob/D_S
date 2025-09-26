@@ -138,7 +138,17 @@ export function setupDeathRules() {
 
     if (!attacker || !victim) return;
     if (attacker.typeId !== "minecraft:player" || victim.typeId !== "minecraft:player") return;
-
+    try{
+      const health = victim.getComponent("minecraft:health");
+      const before = health.currentValue; 
+      console.warn(`現在HP: ${health.currentValue}`);
+      const score = world.scoreboard.getObjective("KIRUFUDA");
+      const plusAttackpoint = score.getScore(attacker.name);
+      console.warn(`/damage ${victim.name} ${plusAttackpoint}`);
+      attacker.runCommand(`damage ${victim.name} ${plusAttackpoint}`);
+      const after = health.currentValue;
+      console.warn(`[DEBUG]拳(1)+追加ダメージ${plusAttackpoint} HP${before} → ${after}`);
+    } catch{}
   });
 
   // === 正しいキル成立時の処理 ===

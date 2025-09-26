@@ -210,10 +210,15 @@ function applyEffect(player, role) {
 
 
 function addKiruFuda(player, amount) {
+  world.sendMessage("§a[DEBUG] 切札 スコアボードを初期化しました");
   const score = world.scoreboard.getObjective("KIRUFUDA") ??
     world.scoreboard.addObjective("KIRUFUDA", "KIRUFUDA");
-  const current = score.getScore(player) ?? 0;
-  score.setScore(player, current + amount);
+  // identity を強制的に確保
+  //if (score.getScore(player.name) === undefined) {
+  score.setScore(player.name, 0);
+  //}
+  const current = score.getScore(player.name) ?? 0;
+  score.setScore(player.name, current + amount);
 }
 
 function giveHouseki(player, amount) {

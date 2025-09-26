@@ -8,6 +8,7 @@ let gameTimer = null;
 export function startGameTimer() {
     gameElapsedSeconds = 0;
     checkPlayerCount();
+    N2025no09no26no18no29noVCwaChaos();
     if (gameTimer) system.clearRun(gameTimer);
 
     gameTimer = system.runInterval(() => {
@@ -16,8 +17,8 @@ export function startGameTimer() {
         const remaining = GAME_LIMIT_TIME - gameElapsedSeconds;
         if (remaining <= 0) {
             world.sendMessage("§c[Game] Time Up!");
-            gameEnd(); // ゲーム終了処理呼び出し
             system.clearRun(gameTimer);
+            gameEnd(); // ゲーム終了処理呼び出し
             return;
         }
 
@@ -43,7 +44,7 @@ export function yomikomudake001(){
     console.warn("timeboard.js was loading.")
 }
 export function gameEnd(){ // ここに終了処理を追加
-    gameElapsedSeconds = 1000;
+    gameElapsedSeconds =1000;
     for (const player of world.getPlayers()) {
         clearCardTags(player);
     }
@@ -52,5 +53,15 @@ export function gameEnd(){ // ここに終了処理を追加
     dim.runCommand("scriptevent nico:end");
     dim.runCommand("scriptevent nico:cardClear");
     dim.runCommand('tp @a 0 0 0');
+});
+}
+function N2025no09no26no18no29noVCwaChaos(){
+    system.run(() => {
+    try {
+    world.scoreboard.removeObjective("KIRUFUDA");
+    } catch (e) {
+    // 存在しないときはエラーが出るので無視
+    }
+    world.scoreboard.addObjective("KIRUFUDA", "KIRUFUDA");
 });
 }

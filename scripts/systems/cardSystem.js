@@ -122,7 +122,6 @@ export function resetCards() {
     }
     if (msg === "!pstart") {
         ev.cancel = true;
-        distributeCards();
     }
 })
 }

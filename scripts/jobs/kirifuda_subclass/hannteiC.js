@@ -90,7 +90,7 @@ export function evaluateHand(cards) {
   for (const { name, check } of HAND_CHECKERS) {
     if (check(parsed)) return name;
   }
-  return "ノーハンド";
+  return "ブタ(役なし)";
 }
 
 function parseCard(cards) {
