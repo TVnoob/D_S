@@ -134,28 +134,34 @@ export function setupDeathRules() {
   world.afterEvents.entityHurt.subscribe(ev => {
     const attacker = ev.damageSource?.damagingEntity;
     const victim = ev.hurtEntity;
-    const victimCard = getCard(victim);
-    const attackerTarget = getTarget(attacker);
     
     if (!attacker || !victim) return;
     if (attacker.typeId !== "minecraft:player" || victim.typeId !== "minecraft:player") return;
-    console.warn("damage +1 if test: ",attackerTarget === victimCard);
-    if (attackerTarget === victimCard){
-      attacker.runCommand(`damage ${victim.name} 1`);
-      attacker.sendMessage(`attacker${attacker.name}のconstは正常です`)
-      console.warn("damage +1 if test: success?");
-    }
     try{
       const health = victim.getComponent("minecraft:health");
       const before = health.currentValue;
+      const identity = attacker.scoreboardIdentity;
+      console.warn(`test!!!${score.getScore(identity)}`);
       console.warn(`現在HP: ${health.currentValue}`);
       const score = world.scoreboard.getObjective("KIRUFUDA");
-      const plusAttackpoint = score.getScore(attacker.name);
+      const plusAttackpoint = score.getScore(attacker);
       console.warn(`/damage ${victim.name} ${plusAttackpoint}`);
       attacker.runCommand(`damage ${victim.name} ${plusAttackpoint}`);
       const after = health.currentValue;
       console.warn(`[DEBUG]拳(1)+追加ダメージ${plusAttackpoint} HP${before} → ${after}`);
-    } catch{}
+    } catch{
+    /*
+    console.warn(`damage +1 if test: ${attackerTarget} ${victimCard}`,attackerTarget === victimCard);
+    if (attackerTarget === victimCard){
+      attacker.sendMessage(`attackerの${attacker.name}のconstは正常です。被害者は${victim.name}`);
+      console.warn("damage +1 if test: success?");
+      system.runTimeout(() => {
+      attacker.runCommand(`damage ${victim.name} 1`);
+      },10);
+    }
+      不完全なため未実装
+      */
+    }
   });
 
   // === 正しいキル成立時の処理 ===

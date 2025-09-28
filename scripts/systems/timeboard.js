@@ -47,13 +47,17 @@ export function gameEnd(){ // ここに終了処理を追加
     gameElapsedSeconds =1000;
     for (const player of world.getPlayers()) {
         clearCardTags(player);
+        player.runCommand("effect @s saturation 1 255");
+        player.runCommand("effect @s instant_health 1 255");
+
     }
     system.run(() => {
     const dim = world.getDimension("overworld");
     dim.runCommand("scriptevent nico:end");
     dim.runCommand("scriptevent nico:cardClear");
     dim.runCommand('tp @a 0 -60 0');
-    dim.runCommand("gamemode a @a")
+    dim.runCommand("gamemode a @a");
+    dim.runCommand("effect @a clear");
 });
 }
 function N2025no09no26no18no29noVCwaChaos(){

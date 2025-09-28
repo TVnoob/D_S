@@ -50,7 +50,7 @@ function startcount() {
 
 export function kinnsisystems(){
 // PvP禁止処理
-world.afterEvents.entityHurt.subscribe(ev => {
+/*world.afterEvents.entityHurt.subscribe(ev => {
   const { damageSource, hurtEntity } = ev;
   if (damageSource.damagingEntity?.typeId === "minecraft:player" &&
       hurtEntity.typeId === "minecraft:player") {
@@ -60,6 +60,7 @@ world.afterEvents.entityHurt.subscribe(ev => {
     }
   }
 });
+*/
 
 // アイテム使用禁止処理
 world.beforeEvents.itemUse.subscribe(ev => {

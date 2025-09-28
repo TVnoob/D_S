@@ -164,16 +164,14 @@ export function clearCardTags(entity) {
     entity.removeTag(`LastOwner_${item}`);
     } catch{}
   }
-  for (const player of world.getPlayers()){
     try{
-    player.removeTag("dead");
+    entity.removeTag("dead");
     } catch {
 
     }
     try{
-    player.removeTag("successKilled");
+    entity.removeTag("successKilled");
     } catch(e){
         console.warn(e)
     }
-}
 }
