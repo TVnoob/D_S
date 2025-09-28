@@ -134,7 +134,7 @@ function consumeTrump(player) {
   const inv = player.getComponent("inventory").container;
   for (let i = 0; i < inv.size; i++) {
     const item = inv.getItem(i);
-    if (item && item.typeId === "nico:toranpu") { // アイテムIDが変化する可能性
+    if (item && item.typeId === "nico:a-z_card") { // アイテムIDが変化する可能性
       if (item.amount > 1) {
         item.amount -= 1;
         inv.setItem(i, item);
