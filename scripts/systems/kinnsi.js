@@ -97,14 +97,12 @@ system.afterEvents.scriptEventReceive.subscribe(ev => {
     StartGame = true;
     for (const player of world.getPlayers()) {
     player.nameTag = ""; // ネームプレート非表示
-    player.sendMessage("§c[Debug] ネームプレートが非表示になりました！"); // Debug
   }
   }
   if (ev.id === "nico:end"){ // ゲーム終了時
     StartGame = false;
     for (const player of world.getPlayers()) {
     player.nameTag = player.name; // 元の名前を戻す
-    player.sendMessage("§a[Debug] ネームプレートが表示に戻りました！"); // Debug
   }
   }
   if(ev.id === "nico:endD"){

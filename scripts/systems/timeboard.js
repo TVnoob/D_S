@@ -52,7 +52,8 @@ export function gameEnd(){ // ここに終了処理を追加
     const dim = world.getDimension("overworld");
     dim.runCommand("scriptevent nico:end");
     dim.runCommand("scriptevent nico:cardClear");
-    dim.runCommand('tp @a 0 0 0');
+    dim.runCommand('tp @a 0 -60 0');
+    dim.runCommand("gamemode a @a")
 });
 }
 function N2025no09no26no18no29noVCwaChaos(){

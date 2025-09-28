@@ -129,18 +129,25 @@ export function trackPlayerLocations() {
   }, 20); // 1秒ごとに記録
 }
 
-// === Hooks ===
 export function setupDeathRules() {
   // PvPダメージ制御
   world.afterEvents.entityHurt.subscribe(ev => {
     const attacker = ev.damageSource?.damagingEntity;
     const victim = ev.hurtEntity;
-
+    const victimCard = getCard(victim);
+    const attackerTarget = getTarget(attacker);
+    
     if (!attacker || !victim) return;
     if (attacker.typeId !== "minecraft:player" || victim.typeId !== "minecraft:player") return;
+    console.warn("damage +1 if test: ",attackerTarget === victimCard);
+    if (attackerTarget === victimCard){
+      attacker.runCommand(`damage ${victim.name} 1`);
+      attacker.sendMessage(`attacker${attacker.name}のconstは正常です`)
+      console.warn("damage +1 if test: success?");
+    }
     try{
       const health = victim.getComponent("minecraft:health");
-      const before = health.currentValue; 
+      const before = health.currentValue;
       console.warn(`現在HP: ${health.currentValue}`);
       const score = world.scoreboard.getObjective("KIRUFUDA");
       const plusAttackpoint = score.getScore(attacker.name);
