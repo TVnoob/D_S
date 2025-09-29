@@ -149,7 +149,8 @@ export function setupDeathRules() {
       attacker.runCommand(`damage ${victim.name} ${plusAttackpoint}`);
       const after = health.currentValue;
       console.warn(`[DEBUG]拳(1)+追加ダメージ${plusAttackpoint} HP${before} → ${after}`);
-    } catch{
+    } catch(e){
+      console.warn("切り札ダメージに関するエラー:",e);
     /*
     console.warn(`damage +1 if test: ${attackerTarget} ${victimCard}`,attackerTarget === victimCard);
     if (attackerTarget === victimCard){
